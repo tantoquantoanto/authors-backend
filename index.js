@@ -12,9 +12,9 @@ const server = express()
 
 server.use(express.json())
 
-const authorsRoutes = require("./routes/authors")
+const usersRoutes = require("./routes/users")
 
-server.use("/", authorsRoutes)
+server.use("/", usersRoutes)
 
 
 mongoose.connect(process.env.MONGODB_URI)
