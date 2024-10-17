@@ -13,8 +13,10 @@ const server = express()
 server.use(express.json())
 
 const usersRoutes = require("./routes/users")
+const loginRoutes = require("./routes/login")
 
 server.use("/", usersRoutes)
+server.use("/", loginRoutes )
 
 
 mongoose.connect(process.env.MONGODB_URI)
