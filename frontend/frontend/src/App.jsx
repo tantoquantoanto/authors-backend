@@ -2,6 +2,7 @@ import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"
 import { Col, Container, Row } from "react-bootstrap";
 import "./App.css";
+import NewUsersInput from "./components/NewUsersInput";
 
 function App() {
   const [formState, setFormState] = useState({});
@@ -24,7 +25,7 @@ function App() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(formState),
         }
       );
       return await response.json();
@@ -37,13 +38,14 @@ function App() {
   <Container>
     <Row>
       <Col>
-  <form className="d-flex align-items-center justify-content-center" onSubmit={onsubmit}>
+  <form className="d-flex align-items-center justify-content-center" onSubmit={onSubmit}>
     <input type="text" name="email" onChange={onChangeInput}/>
     <input type="text" name="password" onChange={onChangeInput}/>
     <button type="submit">Invia</button>
   </form>
   </Col>
   </Row>
+  <NewUsersInput/>
   </Container>
   </>;
 }

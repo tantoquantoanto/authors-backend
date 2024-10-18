@@ -3,16 +3,26 @@ const UsersModel = require("../models/UsersModel");
 const users = express.Router();
 
 users.get("/users", async (req, res) => {
+  const { page, pageSize = 2 } = req.query;
   try {
-    const users = await UsersModel.find();
+    const users = await UsersModel.find()
+      .limit(pageSize)
+      .skip((page - 1) * pageSize);
+
+    const totalUsers = await UsersModel.countDocuments();
+    const totalPages = Math.ceil(totalUsers / pageSize);
+
     if (users.length === 0) {
       return res.status(404).send({
-        statusCode: 404, 
-        message: "No users found"
-        });
+        statusCode: 404,
+        message: "No users found",
+      });
     }
     res.status(200).send({
       statusCode: 200,
+      count: totalUsers,
+      totalPages: totalPages,
+
       users,
     });
   } catch (error) {
@@ -46,9 +56,8 @@ users.post("/users/create", async (req, res) => {
     surname: req.body.surname,
     email: req.body.email,
     dob: req.body.dob,
-   gender: req.body.gender,
-   password: req.body.password
-
+    gender: req.body.gender,
+    password: req.body.password,
   });
 
   try {
@@ -67,7 +76,6 @@ users.post("/users/create", async (req, res) => {
 
 users.patch("/users/update/:userId", async (req, res) => {
   const { userId } = req.params;
-  
 
   try {
     const updatedUserData = req.body;
@@ -79,50 +87,35 @@ users.patch("/users/update/:userId", async (req, res) => {
       options
     );
 
-    res
-    .status(201)
-    .send({
+    res.status(201).send({
       statusCode: 201,
       message: "User updated with success",
-      result})
+      result,
+    });
   } catch (error) {
-    res
-    .status(500)
-    .send({
-        statusCode: 400,
-        message: error.message
-    })
-
+    res.status(500).send({
+      statusCode: 400,
+      message: error.message,
+    });
   }
 });
 
-
 users.delete("/users/delete/:userId", async (req, res) => {
-const {userId} = req.params
+  const { userId } = req.params;
 
+  try {
+    const userToDelete = await UsersModel.findByIdAndDelete(userId);
 
-try{
-    const userToDelete = await UsersModel.findByIdAndDelete(userId)
-
-    res
-    .status(200)
-    .send({
-        statusCode: 200,
-        message:"User deleted with success" 
-    })
-
-
-}
-catch(error) {
-    res 
-    .status(500)
-    .send({
-        statusCode: 500,
-        message: error.message
-    })
-
-}
-
-})
+    res.status(200).send({
+      statusCode: 200,
+      message: "User deleted with success",
+    });
+  } catch (error) {
+    res.status(500).send({
+      statusCode: 500,
+      message: error.message,
+    });
+  }
+});
 
 module.exports = users;
