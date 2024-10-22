@@ -1,53 +1,27 @@
 import { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/css/bootstrap.min.css";
 import { Col, Container, Row } from "react-bootstrap";
 import "./App.css";
-import NewUsersInput from "./components/NewUsersInput";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import NewUsersInput from "./pages/NewUsersInput";
+import HomePage from "./pages/HomePage";
+import Login from "./pages/Login";
+import { ProtectedRoutes } from "../../../backend/middlewares/ProtectedRoutes";
 
 function App() {
-  const [formState, setFormState] = useState({});
-
-  const onChangeInput = (e) => {
-    const { name, value } = e.target;
-    setFormState({
-      ...formState,
-      [name]: value,
-    });
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formState),
-        }
-      );
-      return await response.json();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  return <>
-  <Container>
-    <Row>
-      <Col>
-  <form className="d-flex align-items-center justify-content-center" onSubmit={onSubmit}>
-    <input type="text" name="email" onChange={onChangeInput}/>
-    <input type="text" name="password" onChange={onChangeInput}/>
-    <button type="submit">Invia</button>
-  </form>
-  </Col>
-  </Row>
-  <NewUsersInput/>
-  </Container>
-  </>;
+  return (
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element = {<Login/>}/>
+          <Route element = {<ProtectedRoutes/>}>
+          <Route path="/home" element={<HomePage/>} />
+          <Route path="/create-new-users" element={<NewUsersInput/>}/>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
 
 export default App;

@@ -1,9 +1,9 @@
 const express = require("express");
-const UsersModel = require("../models/UsersModel");
+const UsersModel = require("../backend/models/UsersModel");
 const users = express.Router();
 
 users.get("/users", async (req, res) => {
-  const { page, pageSize = 2 } = req.query;
+  const { page, pageSize = 3 } = req.query;
   try {
     const users = await UsersModel.find()
       .limit(pageSize)
@@ -58,6 +58,7 @@ users.post("/users/create", async (req, res) => {
     dob: req.body.dob,
     gender: req.body.gender,
     password: req.body.password,
+    img: req.body.img,
   });
 
   try {

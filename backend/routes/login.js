@@ -1,5 +1,5 @@
 const express = require("express");
-const UsersModel = require("../backend/models/UsersModel");
+const UsersModel = require("../models/UsersModel");
 const login = express.Router();
 
 const isPasswordValid = (userPassword, requestPassword) => {
