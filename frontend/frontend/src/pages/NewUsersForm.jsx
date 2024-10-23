@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 
-const NewUsersInput = () => {
+const NewUsersForm = () => {
   const [formState, setFormState] = useState({});
 
   const handleInput = (e) => {
@@ -103,4 +103,4 @@ const NewUsersInput = () => {
   );
 };
 
-export default NewUsersInput;
+export default NewUsersForm;
