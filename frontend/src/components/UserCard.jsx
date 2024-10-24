@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Button, Card, Col } from "react-bootstrap";
+import { useNavigate } from "react-router-dom"; 
 
 const UserCard = ({ img, name, surname, email, gender, id }) => {
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const navigate = useNavigate()
 
-  const getUserId = () => {
-    setSelectedUserId(id);
+  const goToDetailsPage = () => {
+    navigate(`/users/${id}`)
   };
 
   return (
@@ -24,7 +26,7 @@ const UserCard = ({ img, name, surname, email, gender, id }) => {
             <Card.Text className="text-muted mb-2">{email}</Card.Text>
             <Card.Text className="text-muted">{gender}</Card.Text>
             <Button
-              onClick={getUserId}
+              onClick={goToDetailsPage}
               variant="primary"
               className="mt-auto align-self-end"
             >

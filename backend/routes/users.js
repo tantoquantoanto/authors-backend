@@ -23,7 +23,7 @@ users.get("/users", async (req, res, next) => {
 });
 
 // GET user by ID
-users.get("/users/byId/:userId", async (req, res, next) => {
+users.get("/users/:userId", async (req, res, next) => {
     const { userId } = req.params;
     try {
         const user = await UsersModel.findById(userId);
