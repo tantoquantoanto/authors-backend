@@ -1,4 +1,4 @@
-import Login from "../../frontend/frontend/src/pages/Login";
+import Login from "../../frontend/src/pages/Login";
 import { Outlet } from "react-router-dom"
 
 

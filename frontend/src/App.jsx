@@ -5,7 +5,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
-import { ProtectedRoutes } from "../../../backend/middlewares/ProtectedRoutes";
+import { ProtectedRoutes } from "../../backend/middlewares/ProtectedRoutes";
 import NewUsersForm from "./pages/NewUsersForm";
 
 function App() {

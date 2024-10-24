@@ -10,8 +10,8 @@ const server = express();
 server.use(express.json());
 server.use(cors());
 
-const usersRoutes = require("./backend/routes/users");
-const loginRoutes = require("./backend/routes/login");
+const usersRoutes = require("./routes/users");
+const loginRoutes = require("./routes/login");
 
 server.use("/", usersRoutes);
 server.use("/", loginRoutes);
