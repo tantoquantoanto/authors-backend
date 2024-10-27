@@ -22,14 +22,12 @@ const DestinationModel = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Review' 
     }],
-    averageRating: {
-        type: Number,
-        default: 0
-    },
-    images: [{
+    
+    
+    img: {
         type: String, 
         required: true
-    }]
+    }
 }, 
 { timestamps: true, strict: true });
 

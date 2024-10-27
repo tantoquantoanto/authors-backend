@@ -2,52 +2,76 @@ import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
 
 const NewDestinationsForm = () => {
-  const [formState, setFormState] = useState({
-    images: [], // Array per le immagini
-  });
+  const [formState, setFormState] = useState({});
+  const [file, setFile] = useState(null);
 
-  const handleInput = (e) => {
-    const { name, value } = e.target;
+
+
+  const onChangeFile = (e) => {
+    setFile(e.target.files[0])
+  }
+
+  const onChangeInput = (e) => {
+    const {name, value} = e.target;
     setFormState({
       ...formState,
-      [name]: value,
-    });
-  };
+      [name]: value
+    })
+  }
 
-  const handleImagesInput = (e) => {
-    const { value } = e.target;
-    setFormState({
-      ...formState,
-      images: [...formState.images, value], // Aggiunge un'immagine all'array
-    });
-  };
+  const uploadFile = async (fileToUpload) => {
+    const fileData = new FormData();
+    fileData.append("img", fileToUpload)
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/create`,
-        {
+      const response = await fetch( `${
+        import.meta.env.VITE_SERVER_BASE_URL}/destinations/upload`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formState),
-        }
-      );
-      return await response.json();
+          body: fileData
+        })
+        return await response.json()
+      
     } catch (error) {
-      console.log(error);
+      console.log(error.message)
     }
   };
 
+
+  const submitDestination = async (e) => {
+    e.preventDefault();
+
+    if(file){
+      try {
+        const uploadedFile = await uploadFile(file);
+        const postFormState = {
+          ...formState,
+          img: uploadedFile.img
+        }
+        const response = await fetch(`${
+        import.meta.env.VITE_SERVER_BASE_URL}/destinations/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type" : "application/json"
+          },
+          body: JSON.stringify(postFormState)
+        })
+        return await response.json()
+        
+      } catch (error) {
+        console.log(error.message);
+        
+      }
+    }
+
+  }
+
   return (
-    <Form onSubmit={onSubmit} className="mt-5">
+    <Form encType="multipart/form-data" className="mt-5" onSubmit={submitDestination} >
       <Row className="mb-3">
         <Form.Group as={Col} controlId="formName">
           <Form.Label>Name</Form.Label>
           <Form.Control
-            onChange={handleInput}
+            onChange={onChangeInput}
             type="text"
             name="name"
             placeholder="Enter destination name"
@@ -57,7 +81,7 @@ const NewDestinationsForm = () => {
         <Form.Group as={Col} controlId="formLocation">
           <Form.Label>Location</Form.Label>
           <Form.Control
-            onChange={handleInput}
+          onChange={onChangeInput}
             type="text"
             name="location"
             placeholder="Enter location"
@@ -68,7 +92,7 @@ const NewDestinationsForm = () => {
       <Form.Group className="mb-3" controlId="formDescription">
         <Form.Label>Description</Form.Label>
         <Form.Control
-          onChange={handleInput}
+        onChange={onChangeInput}
           as="textarea"
           name="description"
           placeholder="Enter description"
@@ -78,7 +102,7 @@ const NewDestinationsForm = () => {
       <Form.Group className="mb-3" controlId="formCategory">
         <Form.Label>Category</Form.Label>
         <Form.Control
-          onChange={handleInput}
+        onChange={onChangeInput}
           type="text"
           name="category"
           placeholder="Enter category"
@@ -87,12 +111,7 @@ const NewDestinationsForm = () => {
 
       <Form.Group className="mb-3" controlId="formImages">
         <Form.Label>Images (URL)</Form.Label>
-        <Form.Control
-          onChange={handleImagesInput}
-          type="text"
-          name="images"
-          placeholder="Enter image URL"
-        />
+        <Form.Control type="file" name="img" placeholder="Enter image URL" onChange={onChangeFile} />
       </Form.Group>
 
       <Button variant="primary" type="submit">

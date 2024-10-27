@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -45,6 +46,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       enum: ['user', 'admin'], 
       default: 'user', 
+    },
+    img: {
+      type: String,
+      required: true
+
     },
   },
   { timestamps: true, strict: true }

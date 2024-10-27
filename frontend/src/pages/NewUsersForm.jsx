@@ -3,6 +3,31 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 
 const NewUsersForm = () => {
   const [formState, setFormState] = useState({});
+  const [file, setFile] = useState(null);
+
+  const onChangeFile = (e) =>{
+    setFile(e.target.files[0])
+  }
+
+
+  const uploadFile = async (fileToUpload) => {
+    const fileData = new FormData();
+    fileData.append("img", fileToUpload);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/users/upload`,{
+        method: "POST",
+        body: fileData
+      })
+      return await response.json()
+    } catch (error) {
+      console.log(error)
+      
+    }
+
+
+
+  }
 
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -13,23 +38,30 @@ const NewUsersForm = () => {
   };
 
   const onSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+
+  if(file) {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/users/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formState),
-        }
-      );
+      const uploadedFile = await uploadFile(file);
+      const postFormState = {
+        ...formState,
+        img: uploadedFile.img
+      }
+      const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/users/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(postFormState)
+      })
       return await response.json();
+      
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
+
+  }
 
   return (
     <>
@@ -93,6 +125,16 @@ const NewUsersForm = () => {
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </Form.Select>
+        </Form.Group>
+        
+        <Form.Group className="mb-3" controlId="formImg">
+          <Form.Label>IMG</Form.Label>
+          <Form.Control
+            onChange={onChangeFile}
+            type="file"
+            name="img"
+            placeholder="Enter img Url"
+          />
         </Form.Group>
 
         <Button variant="primary" type="submit">

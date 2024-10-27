@@ -9,13 +9,21 @@ import { ProtectedRoutes } from "../../backend/middlewares/ProtectedRoutes";
 import NewUsersForm from "./pages/NewUsersForm";
 import UserDetails from "./pages/UserDetails";
 import UpdateUserPage from "./pages/UpdateUserPage";
+import NewDestinationsForm from "./components/NewDestinationsForm";
+
+import DestinationsComponent from "./components/DestinationsComponent";
+import DestinationDetails from "./components/DestinationDetails";
 
 function App() {
   return (
     <>
+    
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element = {<Login/>}/>
+          <Route path="/destinations" element = {<DestinationsComponent/>}/>
+          <Route path="/destinations/:destinationId" element = {<DestinationDetails/>}/>
+          <Route path = "/create-new-destination" element = {<NewDestinationsForm/>}/>
           <Route element = {<ProtectedRoutes/>}>
           <Route path="/home" element={<HomePage/>} />
           <Route path="/create-new-users" element={<NewUsersForm/>}/>
@@ -24,6 +32,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+     
     </>
   );
 }
