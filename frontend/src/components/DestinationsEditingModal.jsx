@@ -2,10 +2,10 @@ import { useState, useContext } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import ClipLoader from "react-spinners/ClipLoader";
-import { DestinationsContext } from "../../contexts/DestinationsContext"; // Importa il contesto
+import { DestinationsContext } from "../../contexts/DestinationsContext"; 
 
 const DestinationsEditingModal = ({ show, handleClose, destination }) => {
-  const { updateSingleDestination, isLoading, setIsLoading } = useContext(DestinationsContext); // Usa il contesto
+  const { updateSingleDestination, isLoading, setIsLoading } = useContext(DestinationsContext); 
   const [formState, setFormState] = useState({
     name: destination.name,
     description: destination.description,
@@ -47,7 +47,7 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsLoading(true); // Attiva il caricamento
+    setIsLoading(true); 
     let imageUrl = destination.img;
 
     if (file) {
@@ -55,7 +55,7 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
         imageUrl = await uploadFile(file);
       } catch (error) {
         console.error("Image upload failed:", error);
-        setIsLoading(false); // Disattiva il caricamento
+        setIsLoading(false); 
         return;
       }
     }
@@ -63,14 +63,14 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
     const updatedData = { ...formState, img: imageUrl };
 
     try {
-      await updateSingleDestination(destination._id, updatedData); // Usa la funzione del contesto per aggiornare
-      Swal.fire("Successo!", "Destinazione aggiornata con successo.", "success"); // Messaggio di successo
+      await updateSingleDestination(destination._id, updatedData); 
+      Swal.fire("Successo!", "Destinazione aggiornata con successo.", "success"); 
       handleClose();
     } catch (error) {
       console.error("Update failed:", error);
-      Swal.fire("Errore!", "Aggiornamento della destinazione fallito.", "error"); // Messaggio di errore
+      Swal.fire("Errore!", "Aggiornamento della destinazione fallito.", "error"); 
     } finally {
-      setIsLoading(false); // Assicurati di disattivare il caricamento
+      setIsLoading(false); 
     }
   };
 
@@ -80,7 +80,7 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
         <Modal.Title>Modifica Destinazione</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {isLoading ? ( // Controlla sia il caricamento locale che quello del contesto
+        {isLoading ? ( 
           <div className="d-flex justify-content-center">
             <ClipLoader color="#007bff" loading={isLoading} size={50} />
           </div>

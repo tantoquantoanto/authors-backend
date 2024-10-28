@@ -14,7 +14,7 @@ export const DestinationsProvider = ({children}) => {
         try {
             setIsLoading(true);
             const url = `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/?page=${page}&pageSize=${pageSize}`;
-            console.log(url); // Verifica l'URL
+            console.log(url); 
             const response = await fetch(url);
             
             if (!response.ok) {
@@ -22,7 +22,7 @@ export const DestinationsProvider = ({children}) => {
             }
     
             const data = await response.json();
-            console.log(data); // Controlla la risposta
+            console.log(data); 
             setDestinations(data.destinations);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -61,32 +61,37 @@ getDestinationsFromApi()
 
   const updateSingleDestination = async (destinationId, updatedData) => {
     try {
-        setIsLoading(true);
-        const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/update/${destinationId}`, {
-            method: "PATCH",
-            headers : {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(updatedData)
-        })
-        if (!response.ok) {
-            throw new Error("Failed to update destination");
-        }
-
-        const data = await response.json();
-        // Qui imposto la destinazione aggiornata
-        setDestinations((prev) => 
-            prev.map(dest => dest._id === destinationId ? data.destination : dest)
-        );
-        
-        return data.destination; 
+      setIsLoading(true);
+  
+      const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/update/${destinationId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedData)
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to update destination");
+      }
+  
+      const data = await response.json();
+  
+      setDestinations(prev => 
+        prev.map(dest => dest._id === destinationId ? data.destination : dest)
+      );
+  
+      await getSingleDestination(destinationId);
+  
+      return data.destination;
+  
     } catch (error) {
-        console.error("Update failed:", error);
+      console.error("Update failed:", error);
     } finally {
-        setIsLoading(false); 
+      setIsLoading(false);
     }
-        
-  }
+  };
+  
 
 
   return (

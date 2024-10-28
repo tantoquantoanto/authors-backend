@@ -3,6 +3,8 @@ import DestinationCard from "./DestinationCard"
 import { useContext, useEffect, useState } from "react"
 import ResponsivePagination from "react-responsive-pagination";
 import { DestinationsContext } from "../../contexts/DestinationsContext";
+import NavBar from "./NavBar";
+import Footer from "./Footer";
 
 
 
@@ -14,6 +16,7 @@ const DestinationsComponent = () => {
 
 return (
     <> 
+    <NavBar/>
     <Container className="py-4">
     <Row>
       {destinations.map((destination) => (
@@ -37,6 +40,7 @@ return (
           />
         </Row>
   </Container>
+  <Footer/>
     </>
 )
 
