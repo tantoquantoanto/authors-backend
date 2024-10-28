@@ -1,6 +1,7 @@
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { LucidePlane, LucideHome, LucideUser, LucideFacebook, LucideTwitter, LucideInstagram } from "lucide-react";
 import { Link } from "react-router-dom";
+import DestinationsSearchInput from "./DestinationsSearchInput";
 
 const NavBar = () => {
   return (
@@ -24,6 +25,7 @@ const NavBar = () => {
               <NavDropdown.Divider />
               <NavDropdown.Item as={Link} to="/logout">Logout</NavDropdown.Item>
             </NavDropdown>
+            <DestinationsSearchInput/>
           </Nav>
           <Nav className="ms-3 d-flex align-items-center">
             <Nav.Link href="https://facebook.com" className="text-primary">

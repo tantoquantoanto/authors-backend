@@ -5,6 +5,7 @@ import ResponsivePagination from "react-responsive-pagination";
 import { DestinationsContext } from "../../contexts/DestinationsContext";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
+import DestinationsHero from "./DestinationsHero";
 
 
 
@@ -17,6 +18,7 @@ const DestinationsComponent = () => {
 return (
     <> 
     <NavBar/>
+    <DestinationsHero/>
     <Container className="py-4">
     <Row>
       {destinations.map((destination) => (
