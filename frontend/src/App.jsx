@@ -13,11 +13,12 @@ import NewDestinationsForm from "./components/NewDestinationsForm";
 
 import DestinationsComponent from "./components/DestinationsComponent";
 import DestinationDetails from "./components/DestinationDetails";
+import { DestinationsProvider } from "../contexts/DestinationsContext";
 
 function App() {
   return (
     <>
-    
+    <DestinationsProvider>
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element = {<Login/>}/>
@@ -32,6 +33,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      </DestinationsProvider>
      
     </>
   );

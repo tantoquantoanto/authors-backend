@@ -1,46 +1,33 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import DestinationsEditingModal from "./DestinationsEditingModal";
+import { DestinationsContext } from "../../contexts/DestinationsContext";
 
 const DestinationDetails = () => {
-  const [destination, setDestination] = useState(null);
+  const { getSingleDestination, singleDestination, isLoading } = useContext(DestinationsContext);
   const { destinationId } = useParams();
   const [showModal, setShowModal] = useState(false);
 
   const showEditingModal = () => {
-    setShowModal(true)
+    setShowModal(true);
   }
 
   const handleCloseModal = () => {
-    setShowModal(false)
+    setShowModal(false);
   }
-  
-
-  const getSingleDestinationFromApi = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/${destinationId}`);
-      const data = await response.json();
-
-      
-      if (response.ok) {
-        setDestination(data.destination); 
-        console.log(data.destination);
-      } else {
-        console.error(data.message); 
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   useEffect(() => {
-    getSingleDestinationFromApi();
+    getSingleDestination(destinationId);
   }, [destinationId]);
 
-  
-  if (!destination) {
+ 
+  if (isLoading) {
     return <p>Loading...</p>; 
+  }
+
+  if (!singleDestination) {
+    return <p>Destinazione non trovata.</p>; 
   }
 
   return (
@@ -50,16 +37,16 @@ const DestinationDetails = () => {
           <Card className="shadow-sm">
             <Card.Img
               variant="top"
-              src={destination.img}
+              src={singleDestination.img}
               style={{ objectFit: "cover", height: "300px" }}
             />
             <Card.Body>
-              <Card.Title>{destination.name}</Card.Title>
-              <Card.Text>Location: {destination.location}</Card.Text>
-              <Card.Text>Category: {destination.category}</Card.Text>
-              <Card.Text>Description: {destination.description}</Card.Text>
+              <Card.Title>{singleDestination.name}</Card.Title>
+              <Card.Text>Location: {singleDestination.location}</Card.Text>
+              <Card.Text>Category: {singleDestination.category}</Card.Text>
+              <Card.Text>Description: {singleDestination.description}</Card.Text>
               <Button variant="primary" className="mt-3" onClick={showEditingModal}>
-                Edit User
+                Edit Destination
               </Button>
             </Card.Body>
           </Card>
@@ -67,11 +54,9 @@ const DestinationDetails = () => {
       </Row>
       <Row>
         <DestinationsEditingModal
-        show = {showModal}
-        handleClose={handleCloseModal}
-        destination={destination}
-
-
+          show={showModal}
+          handleClose={handleCloseModal}
+          destination={singleDestination}
         />
       </Row>
     </Container>

@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 export const DestinationsContext = createContext()
 
 export const DestinationsProvider = ({children}) => {
-    const [destinations, setDestinations] = useState({});
+    const [destinations, setDestinations] = useState([]);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(6)
     const [totalPages, setTotalPages] = useState(1)
@@ -13,22 +13,31 @@ export const DestinationsProvider = ({children}) => {
     const getDestinationsFromApi = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/?page=${page}&pageSize=${pageSize}`)
-            const data = await response.json()
+            const url = `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/?page=${page}&pageSize=${pageSize}`;
+            console.log(url); // Verifica l'URL
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error("Failed to fetch destinations");
+            }
+    
+            const data = await response.json();
+            console.log(data); // Controlla la risposta
             setDestinations(data.destinations);
-            setTotalPages(data.totalPages)
-
+            setTotalPages(data.totalPages);
         } catch (error) {
-            console.error("Failed to fetch destinations:", error);
-        }
-        finally{
-            setIsLoading(false)
+            console.error("Failed to fetch destinations:", error.message || error);
+        } finally {
+            setIsLoading(false);
         }
     }
+    
+
+    
 
 useEffect(() => {
 getDestinationsFromApi()
-}, [page])
+}, [page, pageSize])
 
 
   const getSingleDestination = async (destinationId) => {
@@ -48,6 +57,8 @@ getDestinationsFromApi()
         }
   }
 
+ 
+
   const updateSingleDestination = async (destinationId, updatedData) => {
     try {
         setIsLoading(true);
@@ -56,22 +67,35 @@ getDestinationsFromApi()
             headers : {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(updatedData);
+            body: JSON.stringify(updatedData)
         })
+        if (!response.ok) {
+            throw new Error("Failed to update destination");
+        }
+
         const data = await response.json();
-      if (response.ok) {
-        setSelectedDestination(data.updatedDestination);
-        getDestinationsFromApi(); // To refresh the list with updated details
-      } else {
-        console.error("Error updating destination:", data.message);
-      }
+        // Qui imposto la destinazione aggiornata
+        setDestinations((prev) => 
+            prev.map(dest => dest._id === destinationId ? data.destination : dest)
+        );
+        
+        return data.destination; 
     } catch (error) {
-      console.error("Error updating destination:", error);
+        console.error("Update failed:", error);
     } finally {
-      setIsLoading(false);
+        setIsLoading(false); 
     }
         
   }
+
+
+  return (
+<DestinationsContext.Provider
+value={{destinations, singleDestination, totalPages, page, setPage, isLoading, setIsLoading, pageSize, updateSingleDestination, getSingleDestination, singleDestination}}>
+    {children}
+</DestinationsContext.Provider>
+    
+  )
 
 
 }

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import ClipLoader from "react-spinners/ClipLoader";
-
+import { DestinationsContext } from "../../contexts/DestinationsContext"; // Importa il contesto
 
 const DestinationsEditingModal = ({ show, handleClose, destination }) => {
+  const { updateSingleDestination, isLoading, setIsLoading } = useContext(DestinationsContext); // Usa il contesto
   const [formState, setFormState] = useState({
     name: destination.name,
     description: destination.description,
@@ -12,7 +13,6 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
     category: destination.category,
   });
   const [file, setFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,22 +41,21 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
     if (!response.ok) throw new Error("Failed to upload image");
 
     const data = await response.json();
-    console.log(data.img);
     return data.img;
-    
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setIsLoading(true); // Attiva il caricamento
     let imageUrl = destination.img;
 
     if (file) {
       try {
-        setIsLoading(true);
         imageUrl = await uploadFile(file);
       } catch (error) {
         console.error("Image upload failed:", error);
+        setIsLoading(false); // Disattiva il caricamento
         return;
       }
     }
@@ -64,26 +63,14 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
     const updatedData = { ...formState, img: imageUrl };
 
     try {
-        setIsLoading(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/update/${destination._id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedData),
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to update destination");
-
-      const result = await response.json();
-      console.log("Destination updated:", result);
+      await updateSingleDestination(destination._id, updatedData); // Usa la funzione del contesto per aggiornare
+      Swal.fire("Successo!", "Destinazione aggiornata con successo.", "success"); // Messaggio di successo
       handleClose();
     } catch (error) {
       console.error("Update failed:", error);
-    }
-    finally{
-        setIsLoading(false);
+      Swal.fire("Errore!", "Aggiornamento della destinazione fallito.", "error"); // Messaggio di errore
+    } finally {
+      setIsLoading(false); // Assicurati di disattivare il caricamento
     }
   };
 
@@ -93,7 +80,7 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
         <Modal.Title>Modifica Destinazione</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-       {isLoading ? (
+        {isLoading ? ( // Controlla sia il caricamento locale che quello del contesto
           <div className="d-flex justify-content-center">
             <ClipLoader color="#007bff" loading={isLoading} size={50} />
           </div>

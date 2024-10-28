@@ -1,35 +1,14 @@
 import { Container, Row } from "react-bootstrap"
 import DestinationCard from "./DestinationCard"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import ResponsivePagination from "react-responsive-pagination";
+import { DestinationsContext } from "../../contexts/DestinationsContext";
 
 
 
 const DestinationsComponent = () => {
 
-    const [destinations, setDestinations] = useState([])
-    console.log(destinations)
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(6);
-    const [totalPages, setTotalPages] = useState(1);
-
-
-    const getDestinationsFromApi = async () => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations?page=${page}&pageSize=${pageSize}`);
-            const data = await response.json();
-            setDestinations(data.destinations) ;
-            setTotalPages(data.totalPages);
-        } catch (error) {
-            console.log(error)
-            
-        }
-        
-        }
-        
-        useEffect(() => {
-        getDestinationsFromApi()
-        }, [page, pageSize])
+  const {page, setPage, destinations, isLoading, setIsLoading, totalPages, pageSize} = useContext(DestinationsContext)
 
 
 
