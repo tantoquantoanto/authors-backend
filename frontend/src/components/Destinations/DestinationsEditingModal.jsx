@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import ClipLoader from "react-spinners/ClipLoader";
-import { DestinationsContext } from "../../contexts/DestinationsContext"; 
+import { DestinationsContext } from "../../../contexts/DestinationsContext"; 
 
 const DestinationsEditingModal = ({ show, handleClose, destination }) => {
   const { updateSingleDestination, isLoading, setIsLoading } = useContext(DestinationsContext); 

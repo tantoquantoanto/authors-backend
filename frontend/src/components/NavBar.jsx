@@ -1,7 +1,7 @@
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { LucidePlane, LucideHome, LucideUser, LucideFacebook, LucideTwitter, LucideInstagram } from "lucide-react";
 import { Link } from "react-router-dom";
-import DestinationsSearchInput from "./DestinationsSearchInput";
+import DestinationsSearchInput from "./Destinations/DestinationsSearchInput";
 
 const NavBar = () => {
   return (

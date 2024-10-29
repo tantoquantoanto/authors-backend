@@ -2,9 +2,9 @@ import { Container, Row } from "react-bootstrap"
 import DestinationCard from "./DestinationCard"
 import { useContext, useEffect, useState } from "react"
 import ResponsivePagination from "react-responsive-pagination";
-import { DestinationsContext } from "../../contexts/DestinationsContext";
-import NavBar from "./NavBar";
-import Footer from "./Footer";
+import { DestinationsContext } from "../../../contexts/DestinationsContext";
+import NavBar from "../NavBar";
+import Footer from "../Footer";
 import DestinationsHero from "./DestinationsHero";
 
 
@@ -28,7 +28,6 @@ return (
           name={destination.name}
           location={destination.location}
           category={destination.category}
-          description={destination.description}
           id={destination._id}
     
         />

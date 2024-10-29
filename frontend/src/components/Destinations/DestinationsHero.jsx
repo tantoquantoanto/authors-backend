@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { DestinationsContext } from "../../contexts/DestinationsContext";
+import { DestinationsContext } from "../../../contexts/DestinationsContext";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import "./components.css/destinationsHero.css"
+import "../componentscss/destinationsHero.css"
 
 const DestinationsHero = () => {
     const { destinations } = useContext(DestinationsContext);

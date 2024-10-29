@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button, Card, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const DestinationCard = ({img, name, location, description, category, id}) =>{
+const DestinationCard = ({img, name, location, category, id}) =>{
 const navigate = useNavigate();  
 const [destinationId, setDestinationId] = useState(null);
 
@@ -28,7 +28,7 @@ return (
             </Card.Title>
             <Card.Text className="text-muted mb-2">{location}</Card.Text>
             <Card.Text className="text-muted mb-2">{category}</Card.Text>
-            <Card.Text className="text-muted">{description}</Card.Text>
+           
             <Button
               onClick={onClick}
               variant="primary"

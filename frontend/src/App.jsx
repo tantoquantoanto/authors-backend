@@ -9,10 +9,10 @@ import { ProtectedRoutes } from "../../backend/middlewares/ProtectedRoutes";
 import NewUsersForm from "./pages/NewUsersForm";
 import UserDetails from "./pages/UserDetails";
 import UpdateUserPage from "./pages/UpdateUserPage";
-import NewDestinationsForm from "./components/NewDestinationsForm";
+import NewDestinationsForm from "./components/Destinations/NewDestinationsForm";
 
-import DestinationsComponent from "./components/DestinationsComponent";
-import DestinationDetails from "./components/DestinationDetails";
+import DestinationsComponent from "./components/Destinations/DestinationsComponent";
+import DestinationDetails from "./components/Destinations/DestinationDetails";
 import { DestinationsProvider } from "../contexts/DestinationsContext";
 
 function App() {

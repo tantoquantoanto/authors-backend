@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import DestinationsEditingModal from "./DestinationsEditingModal";
-import { DestinationsContext } from "../../contexts/DestinationsContext";
+import DestinationsEditingModal from "../Destinations/DestinationsEditingModal";
+import { DestinationsContext } from "../../../contexts/DestinationsContext";
 
 const DestinationDetails = () => {
   const { getSingleDestination, singleDestination, isLoading } = useContext(DestinationsContext);
@@ -42,9 +42,9 @@ const DestinationDetails = () => {
             />
             <Card.Body>
               <Card.Title>{singleDestination.name}</Card.Title>
-              <Card.Text>Location: {singleDestination.location}</Card.Text>
-              <Card.Text>Category: {singleDestination.category}</Card.Text>
-              <Card.Text>Description: {singleDestination.description}</Card.Text>
+              <Card.Text> {singleDestination.location}</Card.Text>
+              <Card.Text>{singleDestination.category}</Card.Text>
+              <Card.Text>{singleDestination.description}</Card.Text>
               <Button variant="primary" className="mt-3" onClick={showEditingModal}>
                 Edit Destination
               </Button>
