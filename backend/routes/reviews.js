@@ -1,5 +1,7 @@
 const express = require("express");
 const ReviewsModel = require("../Schemas/ReviewsModel");
+const UsersModel = require("../models/UsersModel");
+const DestinationModel = require("../models/DestinationModel");
 const reviews = express.Router();
 
 
@@ -36,17 +38,21 @@ reviews.get("./reviews/byId/:reviewId", async(req,res, next) => {
 
 
 reviews.post("./reviews/create", async(req,res, next) => {
+    
 try {
-    const {user, destination, rating, comment} = req.body;
+    const { rating, comment} = req.body;
+    const user = await UsersModel.findOne({_id: req.body.user})
+    const destination = await DestinationModel.findOne({_id: req.body.destination})
 
     const newReview = new ReviewsModel({
-        user: user,  // DOVREBBE ESSERE L'OBJECTID DELL'UTENTE
-        destination: destination,// DOVREBBE ESSERE L'OBJECTID DELLA DESTINAZIONE
+        user: user_id,  
+        destination: destination_id,
         rating: rating, 
         comment: comment
     })
 
     const savedReview = await newReview.save();
+    await DestinationModel.updateOne({_id: destination_id}, {$push: {reviews: savedReview}})
 
     res.status(201).send({statusCode:201, message: "Review created successfully", savedReview})
     

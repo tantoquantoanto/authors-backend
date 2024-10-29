@@ -5,6 +5,7 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const {CloudinaryStorage} = require("multer-storage-cloudinary");
 const internalStorage = require("../middlewares/multer/internalStorage")
+const DestinationModel = require("../models/DestinationModel")
 
 
 const upload = multer({storage: internalStorage, 

@@ -35,11 +35,16 @@ const UserSchema = new mongoose.Schema(
       required: false
 
     },
+    destinations: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Destination"
+    }],
+
     reviews: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Review', 
-        required: false
+       
       }
     ],
     role: {
