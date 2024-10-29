@@ -49,7 +49,9 @@ destinations.get("/destinations", async (req, res, next) => {
       const totalPages = Math.ceil(totalDestinations / pageSize);
       const destinations = await DestinationModel.find()
         .limit(pageSize)  
-        .skip((page - 1) * pageSize); 
+        .skip((page - 1) * pageSize)
+        .populate({path: "reviews"})
+        .populate({path: "user", select: "name surname"})
   
       if (destinations.length === 0) {
         return res
@@ -73,7 +75,13 @@ destinations.get("/destinations", async (req, res, next) => {
 destinations.get("/destinations/:destinationId", async (req, res, next) => {
   const { destinationId } = req.params;
   try {
-    const destination = await DestinationModel.findById(destinationId);
+    const destination = await DestinationModel.findById(destinationId).populate({path: "reviews"}).populate({
+      path: "reviews",
+      populate: {
+        path: "user",
+        select: "name surname" 
+      }
+    });
     if (!destination) {
       res.status(404).send({
         statusCode: 404,

@@ -1,12 +1,12 @@
 const express = require("express");
-const ReviewsModel = require("../Schemas/ReviewsModel");
+const ReviewsModel = require("../models/ReviewsModel");
 const UsersModel = require("../models/UsersModel");
 const DestinationModel = require("../models/DestinationModel");
 const reviews = express.Router();
 
 
 
-reviews.get("./reviews", async(req,res, next) => {
+reviews.get("/reviews", async(req,res, next) => {
     try {
         const reviews = await ReviewsModel.find();
         if(reviews.length === 0){
@@ -37,7 +37,7 @@ reviews.get("./reviews/byId/:reviewId", async(req,res, next) => {
 })
 
 
-reviews.post("./reviews/create", async(req,res, next) => {
+reviews.post("/reviews/create", async(req,res, next) => {
     
 try {
     const { rating, comment} = req.body;
@@ -45,14 +45,14 @@ try {
     const destination = await DestinationModel.findOne({_id: req.body.destination})
 
     const newReview = new ReviewsModel({
-        user: user_id,  
-        destination: destination_id,
+        user: user._id,  
+        destination: destination._id,
         rating: rating, 
         comment: comment
     })
 
     const savedReview = await newReview.save();
-    await DestinationModel.updateOne({_id: destination_id}, {$push: {reviews: savedReview}})
+    await DestinationModel.updateOne({_id: destination._id}, {$push: {reviews: savedReview}})
 
     res.status(201).send({statusCode:201, message: "Review created successfully", savedReview})
     
@@ -64,7 +64,7 @@ try {
 })
 
 
-reviews.patch("./reviews/update/:reviewId", async(req,res, next) => {
+reviews.patch("/reviews/update/:reviewId", async(req,res, next) => {
     const{reviewId} = req.params; 
 
     try {
@@ -83,7 +83,7 @@ reviews.patch("./reviews/update/:reviewId", async(req,res, next) => {
 })
 
 
-reviews.delete("./reviews/delete/:reviewId", async (req,res, next) => {
+reviews.delete("/reviews/delete/:reviewId", async (req,res, next) => {
 const {reviewId} = req.params;
 try {
     await ReviewsModel.findByIdAndDelete(reviewId);
