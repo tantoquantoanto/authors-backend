@@ -1,5 +1,5 @@
 .destinations-hero {
-    height: 60vh; 
+    height: 80vh; 
     position: relative;
     overflow: hidden;
 }
@@ -11,7 +11,9 @@
 .hero-img {
     height: 100%; 
     width: 100%; 
-    object-fit: cover; 
+    object-fit: contain;
+
+
 }
 
 .text-overlay {
@@ -30,7 +32,7 @@
 /* Stili per mobile */
 @media (max-width: 768px) {
     .destinations-hero {
-        height: 40vh; 
+        height: 60vh; 
     }
 
     .hero-title {

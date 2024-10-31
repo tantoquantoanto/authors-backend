@@ -6,7 +6,7 @@ import DestinationsSearchInput from "./Destinations/DestinationsSearchInput";
 const NavBar = () => {
   return (
     <Navbar bg="light" variant="light" expand="lg" sticky="top" className="shadow-sm">
-      <Container>
+      <Container fluid>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center text-primary">
           <LucidePlane size={28} className="me-2" /> TravelDest
         </Navbar.Brand>
@@ -18,6 +18,9 @@ const NavBar = () => {
             </Nav.Link>
             <Nav.Link as={Link} to="/destinations" className="text-dark">
               <LucidePlane size={20} className="me-1" /> Destinations
+            </Nav.Link>
+            <Nav.Link as={Link} to="/contatti" className="text-dark">
+              Contatti
             </Nav.Link>
             <NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
               <NavDropdown.Item as={Link} to="/profile">My Profile</NavDropdown.Item>

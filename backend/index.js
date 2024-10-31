@@ -17,12 +17,14 @@ const usersRoutes = require("./routes/users");
 const loginRoutes = require("./routes/login");
 const destinationsRoutes = require("./routes/destinations")
 const reviewsRoutes = require("./routes/reviews")
+const emailRoutes = require("./routes/emails")
 console.log(path.join(__dirname, "./public"))
 
 server.use("/", usersRoutes);
 server.use("/", loginRoutes);
 server.use("/", destinationsRoutes);
 server.use("/", reviewsRoutes)
+server.use("/", emailRoutes);
 
 
 mongoose.connect(process.env.MONGODB_URI);

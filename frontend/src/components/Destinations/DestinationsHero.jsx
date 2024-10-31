@@ -14,7 +14,7 @@ const DestinationsHero = () => {
     const randomDestination = destinations[randomIndex];
 
     return (
-        <Container fluid className="destinations-hero my-4">
+        <Container className="destinations-hero my-4">
             <Row className="justify-content-center">
                 <Col md={12} className="text-center">
                     <Card className="bg-dark text-white border-0 hero-card">

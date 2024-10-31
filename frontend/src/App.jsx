@@ -10,31 +10,40 @@ import NewUsersForm from "./pages/NewUsersForm";
 import UserDetails from "./pages/UserDetails";
 import UpdateUserPage from "./pages/UpdateUserPage";
 import NewDestinationsForm from "./components/Destinations/NewDestinationsForm";
-
-import DestinationsComponent from "./components/Destinations/DestinationsComponent";
 import DestinationDetails from "./components/Destinations/DestinationDetails";
 import { DestinationsProvider } from "../contexts/DestinationsContext";
+import Contatti from "./pages/Contatti";
+import DestinationsPage from "./DestinationsPage";
 
 function App() {
   return (
     <>
-    <DestinationsProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/" element = {<Login/>}/>
-          <Route path="/destinations" element = {<DestinationsComponent/>}/>
-          <Route path="/destinations/:destinationId" element = {<DestinationDetails/>}/>
-          <Route path = "/create-new-destination" element = {<NewDestinationsForm/>}/>
-          <Route element = {<ProtectedRoutes/>}>
-          <Route path="/home" element={<HomePage/>} />
-          <Route path="/create-new-users" element={<NewUsersForm/>}/>
-          <Route path="/users/:userId" element = {<UserDetails/>}/>
-          <Route path="/users/update/:userId" element = {<UpdateUserPage/>}/>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <DestinationsProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route exact path="/" element={<Login />} />
+            <Route path="/destinations" element={<DestinationsPage/>} />
+            <Route
+              path="/destinations/:destinationId"
+              element={<DestinationDetails />}
+            />
+            <Route path="/contatti" element={<Contatti />} />
+            <Route
+              path="/create-new-destination"
+              element={<NewDestinationsForm />}
+            />
+            <Route element={<ProtectedRoutes />}>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/create-new-users" element={<NewUsersForm />} />
+              <Route path="/users/:userId" element={<UserDetails />} />
+              <Route
+                path="/users/update/:userId"
+                element={<UpdateUserPage />}
+              />
+            </Route>
+          </Routes>
+        </BrowserRouter>
       </DestinationsProvider>
-     
     </>
   );
 }

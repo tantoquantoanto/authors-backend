@@ -5,6 +5,36 @@ const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const internalStorage = require("../middlewares/multer/internalStorage");
+const cloudStorage = require("../middlewares/multer/cloudinary");
+
+
+
+
+//rotta per approvazione post facendo una put per modificare solo approved
+
+destinations.put("/destinations/approve/:destinationId", async (req,res,next) => {
+  const {destinationId} = req.params;
+  try {
+    const approval = req.body;
+    const updatedDestination = await DestinationModel.findByIdAndUpdate(
+      destinationId,
+      approval,
+      { new: true }
+    );
+      
+    if (updatedDestination) {
+      res.status(200).json({ message: "Destinazione approvata con successo", updatedDestination });
+    } else {
+      res.status(404).json({ message: "Destinazione non trovata" });
+    }
+    
+  } catch (error) {
+    next(error)
+    
+  }
+})
+
+const cloud = multer({ storage: cloudStorage });
 
 const upload = multer({
   storage: internalStorage,
@@ -18,6 +48,18 @@ const upload = multer({
     }
   },
 });
+
+destinations.post(
+  "/destinations/upload/cloud",
+  cloud.single("img"),
+  async (req, res, next) => {
+    try {
+      res.status(200).json({ img: req.file.path });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 destinations.post(
   "/destinations/upload",
@@ -36,52 +78,48 @@ destinations.post(
   }
 );
 
-
-
-
-
-
 destinations.get("/destinations", async (req, res, next) => {
-    const { page = 1, pageSize = 6 } = req.query;
-  
-    try {
-      const totalDestinations = await DestinationModel.countDocuments();
-      const totalPages = Math.ceil(totalDestinations / pageSize);
-      const destinations = await DestinationModel.find()
-        .limit(pageSize)  
-        .skip((page - 1) * pageSize)
-        .populate({path: "reviews"})
-        .populate({path: "user", select: "name surname"})
-  
-      if (destinations.length === 0) {
-        return res
-          .status(404)
-          .send({ statusCode: 404, message: "No destinations found" });
-      }
-  
-      res.status(200).send({
-        statusCode: 200,
-        message: `${destinations.length} destinations found successfully`,
-        totalDestinations: totalDestinations,
-        totalPages: totalPages,
-        destinations,
-      });
-    } catch (error) {
-      next(error);
+  const { page = 1, pageSize = 6 } = req.query;
+
+  try {
+    const totalDestinations = await DestinationModel.countDocuments();
+    const totalPages = Math.ceil(totalDestinations / pageSize);
+    const destinations = await DestinationModel.find()
+      .limit(pageSize)
+      .skip((page - 1) * pageSize)
+      .populate({ path: "reviews" })
+      .populate({ path: "user", select: "name surname" });
+
+    if (destinations.length === 0) {
+      return res
+        .status(404)
+        .send({ statusCode: 404, message: "No destinations found" });
     }
-  });
-  
+
+    res.status(200).send({
+      statusCode: 200,
+      message: `${destinations.length} destinations found successfully`,
+      totalDestinations: totalDestinations,
+      totalPages: totalPages,
+      destinations,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 destinations.get("/destinations/:destinationId", async (req, res, next) => {
   const { destinationId } = req.params;
   try {
-    const destination = await DestinationModel.findById(destinationId).populate({path: "reviews"}).populate({
-      path: "reviews",
-      populate: {
-        path: "user",
-        select: "name surname" 
-      }
-    });
+    const destination = await DestinationModel.findById(destinationId)
+      .populate({ path: "reviews" })
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "user",
+          select: "name surname",
+        },
+      });
     if (!destination) {
       res.status(404).send({
         statusCode: 404,
@@ -102,8 +140,8 @@ destinations.get("/destinations/category/:category", async (req, res, next) => {
   const { category } = req.params;
   try {
     const destinations = await DestinationModel.find({
-        category: { $regex: new RegExp(category, "i") } // Case insensitive
-      });
+      category: { $regex: new RegExp(category, "i") }, // Case insensitive
+    });
     if (destinations.length === 0) {
       return res.status(404).send({
         statusCode: 404,
@@ -120,35 +158,27 @@ destinations.get("/destinations/category/:category", async (req, res, next) => {
   }
 });
 
-destinations.get(
-    "/destinations/name/:name",
-    async (req, res, next) => {
-      const { name } = req.params;
-      try {
-        const destinations = await DestinationModel.find({
-            name: { $regex: new RegExp(name, "i") } // Case insensitive
-          });
-        if (destinations.length === 0) {
-          return res
-            .status(404)
-            .send({
-              statusCode: 404,
-              message: "No destinations found with the given name",
-            });
-        }
-        res
-          .status(200)
-          .send({
-            statusCode: 200,
-            message: "Destinations found successfully",
-            destinations,
-          });
-      } catch (error) {
-        next(error);
-      }
+destinations.get("/destinations/name/:name", async (req, res, next) => {
+  const { name } = req.params;
+  try {
+    const destinations = await DestinationModel.find({
+      name: { $regex: new RegExp(name, "i") }, // Case insensitive
+    });
+    if (destinations.length === 0) {
+      return res.status(404).send({
+        statusCode: 404,
+        message: "No destinations found with the given name",
+      });
     }
-  );
-  
+    res.status(200).send({
+      statusCode: 200,
+      message: "Destinations found successfully",
+      destinations,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 destinations.post("/destinations/create", async (req, res, next) => {
   try {
@@ -159,6 +189,7 @@ destinations.post("/destinations/create", async (req, res, next) => {
       location: location,
       category: category, // Dovrebbe essere l'ObjectId della categoria
       img: img,
+      approved: false
     });
 
     const savedDestination = await newDestination.save();
@@ -170,34 +201,42 @@ destinations.post("/destinations/create", async (req, res, next) => {
 });
 
 destinations.patch(
-    "/destinations/update/:destinationId",
-    async (req, res, next) => {
-      const { destinationId } = req.params;
-      try {
-        const updatedData = req.body;
-        const options = { new: true };
-  
-        const result = await DestinationModel.findByIdAndUpdate(
-          destinationId,
-          updatedData,
-          options
-        );
-  
-        if (!result) {
-          return res.status(404).send({ statusCode: 404, message: "Destination not found" });
-        }
-  
-        res.status(200).send({
-          statusCode: 200,
-          message: "Destination updated successfully",
-          destination: result, // Includi il risultato aggiornato nella risposta
-        });
-      } catch (error) {
-        next(error);
+  "/destinations/update/:destinationId",
+  async (req, res, next) => {
+    const { destinationId } = req.params;
+    try {
+      const updatedData = req.body;
+      const options = { new: true };
+
+      const result = await DestinationModel.findByIdAndUpdate(
+        destinationId,
+        updatedData,
+        options
+      );
+
+      if (!result) {
+        return res
+          .status(404)
+          .send({ statusCode: 404, message: "Destination not found" });
       }
+
+      res.status(200).send({
+        statusCode: 200,
+        message: "Destination updated successfully",
+        destination: result, // Includi il risultato aggiornato nella risposta
+      });
+    } catch (error) {
+      next(error);
     }
+  }
+);
+
+destinations.patch("/destinations/updateModel", async (req, res, next) => {
+  await DestinationModel.updateMany(
+    { approved: { $exists: false } },
+    { $set: { approved: false } }
   );
-  
+});
 
 destinations.delete(
   "/destinations/delete/:destinationId",

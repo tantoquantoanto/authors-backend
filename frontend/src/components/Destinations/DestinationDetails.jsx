@@ -8,6 +8,7 @@ const DestinationDetails = () => {
   const { getSingleDestination, singleDestination, isLoading } = useContext(DestinationsContext);
   const { destinationId } = useParams();
   const [showModal, setShowModal] = useState(false);
+  
 
   const showEditingModal = () => {
     setShowModal(true);
@@ -19,6 +20,7 @@ const DestinationDetails = () => {
 
   useEffect(() => {
     getSingleDestination(destinationId);
+    
   }, [destinationId]);
 
  
@@ -45,6 +47,7 @@ const DestinationDetails = () => {
               <Card.Text> {singleDestination.location}</Card.Text>
               <Card.Text>{singleDestination.category}</Card.Text>
               <Card.Text>{singleDestination.description}</Card.Text>
+              <Card.Text>{singleDestination.reviews[0].comment} </Card.Text>
               <Button variant="primary" className="mt-3" onClick={showEditingModal}>
                 Edit Destination
               </Button>

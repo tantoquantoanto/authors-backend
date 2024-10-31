@@ -32,7 +32,7 @@ return (
             <Button
               onClick={onClick}
               variant="primary"
-              className="mt-auto align-self-end"
+              className="mt-auto"
             >
               Details
             </Button>

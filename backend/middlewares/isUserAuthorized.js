@@ -1,4 +1,4 @@
-const isUserAuthorized = (req, res, next) => {
+export const isUserAuthorized = (req, res, next) => {
     const { role } = req.body;
 
     if(role !== "admin") {
@@ -8,4 +8,3 @@ const isUserAuthorized = (req, res, next) => {
     next()
 }
 
-module.exports = isUserAuthorized;
