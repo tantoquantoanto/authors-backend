@@ -96,7 +96,7 @@ getDestinationsFromApi()
 
   return (
 <DestinationsContext.Provider
-value={{destinations, singleDestination, totalPages, page, setPage, isLoading, setIsLoading, pageSize, updateSingleDestination, getSingleDestination, singleDestination}}>
+value={{destinations, singleDestination, totalPages, page, setPage, isLoading, setIsLoading, pageSize, updateSingleDestination, getSingleDestination}}>
     {children}
 </DestinationsContext.Provider>
     
