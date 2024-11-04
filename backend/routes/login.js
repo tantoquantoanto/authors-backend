@@ -1,14 +1,10 @@
 const express = require("express");
 const UsersModel = require("../models/UsersModel");
 const login = express.Router();
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
-const isPasswordValid = (userPassword, requestPassword) => {
-  if (userPassword !== requestPassword) {
-    return false;
-  } else {
-    return true;
-  }
-};
+
 
 login.post("/login", async (req, res) => {
   try {
@@ -20,24 +16,38 @@ login.post("/login", async (req, res) => {
       });
     }
 
-    const checkPassword = isPasswordValid(user.password, req.body.password);
-    if (!checkPassword) {
-      return res.status(403).send({
-        statusCode: 403,
-        message: "The password is not valid",
-      });
+    const isPasswordValid = await bcrypt.compare(req.body.password, user.password)
+    if (!isPasswordValid) {
+        return res
+            .status(401)
+            .send({
+                statusCode: 401,
+                message: 'Email or password not valid!'
+            })
     }
 
-    res.status(200).send({
-      statusCode: 200,
-      message: "Login effettuato con successo",
-    });
-  } catch (error) {
-    res.status(500).send({
-      statusCode: 500,
-      message: "Oops, something went wrong",
-    });
-  }
+    const token = jwt.sign({
+        role: user.role,
+        userName: user.username,
+        dob: user.dob,
+        createdAt: user.createdAt
+    }, process.env.JWT_SECRET, {
+        expiresIn: '10m'
+    })
+
+    res
+        .header('authorization', token)
+        .status(200)
+        .send({
+            statusCode: 200,
+            message: 'Login successfully',
+            token
+        })
+} catch (error) {
+    next(error)
+}
 });
 
 module.exports = login;
+
+

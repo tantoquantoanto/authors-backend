@@ -4,14 +4,14 @@ import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import "../componentscss/destinationsHero.css"
 
 const DestinationsHero = () => {
-    const { destinations } = useContext(DestinationsContext);
+    const { approvedDestinations } = useContext(DestinationsContext);
 
-    if (!destinations || destinations.length === 0) {
+    if (!approvedDestinations || approvedDestinations.length === 0) {
         return <p>Nessuna destinazione disponibile.</p>; 
     }
 
-    const randomIndex = Math.floor(Math.random() * destinations.length);
-    const randomDestination = destinations[randomIndex];
+    const randomIndex = Math.floor(Math.random() * approvedDestinations.length);
+    const randomDestination = approvedDestinations[randomIndex];
 
     return (
         <Container className="destinations-hero my-4">

@@ -1,11 +1,11 @@
 const express = require("express");
-const UsersModel = require("../models/UsersModel");
 const users = express.Router();
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const {CloudinaryStorage} = require("multer-storage-cloudinary");
 const internalStorage = require("../middlewares/multer/internalStorage")
-const DestinationModel = require("../models/DestinationModel")
+const DestinationModel = require("../models/DestinationModel");
+const UsersModel = require("../models/UsersModel");
 
 
 const upload = multer({storage: internalStorage, 

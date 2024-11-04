@@ -1,31 +1,21 @@
+import { useContext, useEffect, useState } from "react"
+import { DestinationsContext } from "../../../contexts/DestinationsContext"
+import NavBar from "../NavBar";
 import { Container, Row } from "react-bootstrap";
-import DestinationCard from "./components/Destinations/DestinationCard";
-import { useContext, useEffect, useState } from "react";
+import DestinationCard from "./DestinationCard";
 import ResponsivePagination from "react-responsive-pagination";
-import { DestinationsContext } from "../contexts/DestinationsContext";
-import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
-import DestinationsHero from "./components/Destinations/DestinationsHero";
+import Footer from "../Footer";
 
-const DestinationsPage = () => {
-  const {
-    page,
-    setPage,
-    approvedDestinations,
-    isLoading,
-    setIsLoading,
-    totalPages,
-    pageSize,
-  } = useContext(DestinationsContext);
+const AdminDestinationsComponent = () => {
+    
+   const {notApprovedDestinations, page, setPage, totalPages} = useContext(DestinationsContext)
 
-
-  return (
-    <>
+        return(
+            <>
       <NavBar />
-      <DestinationsHero />
       <Container className="py-4">
         <Row>
-          {approvedDestinations.map((destination) => (
+          {notApprovedDestinations.map((destination) => (
             <DestinationCard
               key={destination._id}
               img={destination.img}
@@ -44,8 +34,11 @@ const DestinationsPage = () => {
           />
         </Row>
       </Container>
-      <Footer />
+      <Footer/>
     </>
-  );
-};
-export default DestinationsPage;
+        )
+
+
+}
+
+export default AdminDestinationsComponent

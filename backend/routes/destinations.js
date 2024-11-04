@@ -23,7 +23,10 @@ destinations.put("/destinations/approve/:destinationId", async (req,res,next) =>
     );
       
     if (updatedDestination) {
-      res.status(200).json({ message: "Destinazione approvata con successo", updatedDestination });
+      const message = approval.approved ? 
+        "Destinazione approvata con successo" : 
+        "Destinazione scartata con successo";
+      res.status(200).json({ message, updatedDestination });
     } else {
       res.status(404).json({ message: "Destinazione non trovata" });
     }
