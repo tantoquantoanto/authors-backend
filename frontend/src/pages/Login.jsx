@@ -13,32 +13,30 @@ const Login = () => {
  })   
  }
 
+ const loginRequest = async () => {
+  try {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/login`, {
+          method: 'POST',
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+      })
+      const data = await response.json()
+      if (response.ok) {
+          localStorage.setItem('Authorization', JSON.stringify(data.token))
+          navigate('/home', {replace: true})
+      }
+      return response
+  } catch (e) {
+      console.log(e.message)
+  }
+}
+
+
  const onSubmit = async (e) => {
     e.preventDefault()
-    try {
-        const response = await fetch(
-          `${import.meta.env.VITE_SERVER_BASE_URL}/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData)
-          }
-        );
-        
-        const data = await response.json();
-        if(response.ok) {
-            localStorage.setItem("Auth", "true");
-            navigate("/home")
-           
-        }
-
-        return data;
-       
-      } catch (error) {
-        console.log(error);
-      }
+   await loginRequest()
     };
  
 
