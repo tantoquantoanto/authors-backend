@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Container } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import useSession from "../../hooks/useSession";
 
 const UpdateUserPage = () => {
   const { userId } = useParams(); 
@@ -14,12 +15,19 @@ const UpdateUserPage = () => {
     role: ""
   });
   const navigate = useNavigate(); 
+  const session = useSession(); 
+  const token = session ? localStorage.getItem("Authorization") : null; 
 
  
   const getUserFromApi = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${userId}`
+        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${userId}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`, 
+          },
+        }
       );
       const data = await response.json();
       setUser(data.user);
@@ -59,6 +67,7 @@ const onSubmit = async (e) => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, 
         },
         body: JSON.stringify(formData),
       }

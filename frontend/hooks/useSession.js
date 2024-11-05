@@ -1,4 +1,4 @@
-import {useAuth} from "../middlewares/ProtectedRoutes.jsx";
+
 import { jwtDecode } from "jwt-decode";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
@@ -15,7 +15,7 @@ const useSession = () => {
 
     useEffect(() => {
         if (!session || isTokenExpired(decodedSession.exp, () => navigate('/'))) {
-            navigateToHome()
+            navigate("/")
         }
     }, [navigate, session]);
 

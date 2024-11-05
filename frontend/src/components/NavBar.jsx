@@ -2,8 +2,14 @@ import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { LucidePlane, LucideHome, LucideUser, LucideFacebook, LucideTwitter, LucideInstagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import DestinationsSearchInput from "./Destinations/DestinationsSearchInput";
+import useSession from "../../hooks/useSession";
 
 const NavBar = () => {
+
+const session = useSession();
+const userId = session.userId;
+console.log(session);
+
   return (
     <Navbar bg="light" variant="light" expand="lg" sticky="top" className="shadow-sm">
       <Container fluid>
@@ -23,7 +29,7 @@ const NavBar = () => {
               Contatti
             </Nav.Link>
             <NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
-              <NavDropdown.Item as={Link} to="/profile">My Profile</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to={`/users/${userId}`}>My Profile</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/reviews">My Reviews</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item as={Link} to="/logout">Logout</NavDropdown.Item>

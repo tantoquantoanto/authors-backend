@@ -6,14 +6,15 @@ const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const internalStorage = require("../middlewares/multer/internalStorage");
 const cloudStorage = require("../middlewares/multer/cloudinary");
+const checkUserRole = require("../middlewares/checkUserRole");
+const isUserAdmin = require("../middlewares/isUserAdmin");
 
 
 
 
-//rotta per approvazione post facendo una put per modificare solo approved
-
-destinations.put("/destinations/approve/:destinationId", async (req,res,next) => {
-  const {destinationId} = req.params;
+//rotta per approvazione post facendo una put per modificare solo approved, accesso solo agli admin con middlewares
+destinations.put("/destinations/approve/:destinationId", checkUserRole, isUserAdmin, async (req, res, next) => {
+  const { destinationId } = req.params;
   try {
     const approval = req.body;
     const updatedDestination = await DestinationModel.findByIdAndUpdate(
@@ -21,21 +22,24 @@ destinations.put("/destinations/approve/:destinationId", async (req,res,next) =>
       approval,
       { new: true }
     );
-      
+
     if (updatedDestination) {
-      const message = approval.approved ? 
-        "Destinazione approvata con successo" : 
-        "Destinazione scartata con successo";
+      const message = approval.approved
+        ? "Destinazione approvata con successo"
+        : "Destinazione scartata con successo";
       res.status(200).json({ message, updatedDestination });
     } else {
       res.status(404).json({ message: "Destinazione non trovata" });
     }
-    
   } catch (error) {
-    next(error)
-    
+    next(error);
   }
-})
+});
+
+
+
+
+
 
 const cloud = multer({ storage: cloudStorage });
 
@@ -81,13 +85,17 @@ destinations.post(
   }
 );
 
-destinations.get("/destinations", async (req, res, next) => {
+
+
+
+destinations.get("/destinations", checkUserRole, async (req, res, next) => {
   const { page = 1, pageSize = 6 } = req.query;
+  const query = req.userRole === "admin" ? {} : { approved: true };
 
   try {
-    const totalDestinations = await DestinationModel.countDocuments();
+    const totalDestinations = await DestinationModel.countDocuments(query);
     const totalPages = Math.ceil(totalDestinations / pageSize);
-    const destinations = await DestinationModel.find()
+    const destinations = await DestinationModel.find(query)
       .limit(pageSize)
       .skip((page - 1) * pageSize)
       .populate({ path: "reviews" })
@@ -110,6 +118,9 @@ destinations.get("/destinations", async (req, res, next) => {
     next(error);
   }
 });
+
+
+
 
 destinations.get("/destinations/:destinationId", async (req, res, next) => {
   const { destinationId } = req.params;
@@ -190,7 +201,7 @@ destinations.post("/destinations/create", async (req, res, next) => {
       name: name,
       description: description,
       location: location,
-      category: category, // Dovrebbe essere l'ObjectId della categoria
+      category: category, 
       img: img,
       approved: false
     });
@@ -203,36 +214,36 @@ destinations.post("/destinations/create", async (req, res, next) => {
   }
 });
 
-destinations.patch(
-  "/destinations/update/:destinationId",
-  async (req, res, next) => {
-    const { destinationId } = req.params;
-    try {
-      const updatedData = req.body;
-      const options = { new: true };
 
-      const result = await DestinationModel.findByIdAndUpdate(
-        destinationId,
-        updatedData,
-        options
-      );
 
-      if (!result) {
-        return res
-          .status(404)
-          .send({ statusCode: 404, message: "Destination not found" });
-      }
+destinations.patch("/destinations/update/:destinationId", checkUserRole, isUserAdmin, async (req, res, next) => {
+  const { destinationId } = req.params;
+  try {
+    const updatedData = req.body;
+    const options = { new: true };
 
-      res.status(200).send({
-        statusCode: 200,
-        message: "Destination updated successfully",
-        destination: result, // Includi il risultato aggiornato nella risposta
-      });
-    } catch (error) {
-      next(error);
+    const result = await DestinationModel.findByIdAndUpdate(
+      destinationId,
+      updatedData,
+      options
+    );
+
+    if (!result) {
+      return res
+        .status(404)
+        .send({ statusCode: 404, message: "Destination not found" });
     }
+
+    res.status(200).send({
+      statusCode: 200,
+      message: "Destination updated successfully",
+      destination: result,
+    });
+  } catch (error) {
+    next(error);
   }
-);
+});
+
 
 destinations.patch("/destinations/updateModel", async (req, res, next) => {
   await DestinationModel.updateMany(
@@ -241,8 +252,10 @@ destinations.patch("/destinations/updateModel", async (req, res, next) => {
   );
 });
 
+
+
 destinations.delete(
-  "/destinations/delete/:destinationId",
+  "/destinations/delete/:destinationId", checkUserRole, isUserAdmin,
   async (req, res, next) => {
     const { destinationId } = req.params;
 

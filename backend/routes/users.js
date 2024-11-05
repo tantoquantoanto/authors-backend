@@ -6,6 +6,8 @@ const {CloudinaryStorage} = require("multer-storage-cloudinary");
 const internalStorage = require("../middlewares/multer/internalStorage")
 const DestinationModel = require("../models/DestinationModel");
 const UsersModel = require("../models/UsersModel");
+const isUserAdmin = require("../middlewares/isUserAdmin");
+const isUserAuthorizedToProfile = require("../middlewares/isUserAuthorizedToProfile");
 
 
 const upload = multer({storage: internalStorage, 
@@ -69,7 +71,7 @@ users.get("/users", async (req, res, next) => {
 });
 
 // GET user by ID
-users.get("/users/:userId", async (req, res, next) => {
+users.get("/users/:userId", isUserAuthorizedToProfile, async (req, res, next) => {
   const { userId } = req.params;
   try {
     const user = await UsersModel.findById(userId);
@@ -88,7 +90,7 @@ users.get("/users/:userId", async (req, res, next) => {
 });
 
 // POST create new user
-users.post("/users/create", async (req, res, next) => {
+users.post("/users/create",  async (req, res, next) => {
   try {
     const { name, surname, username, email, password, isActive, role, img } =
       req.body;
@@ -118,7 +120,7 @@ users.post("/users/create", async (req, res, next) => {
 });
 
 // PATCH update user by ID
-users.patch("/users/update/:userId", async (req, res, next) => {
+users.patch("/users/update/:userId", isUserAuthorizedToProfile, async (req, res, next) => {
   const { userId } = req.params;
   try {
     const updatedData = req.body;
@@ -148,7 +150,7 @@ users.patch("/users/update/:userId", async (req, res, next) => {
 });
 
 // DELETE user by ID
-users.delete("/users/delete/:userId", async (req, res, next) => {
+users.delete("/users/delete/:userId", isUserAuthorizedToProfile, async (req, res, next) => {
   const { userId } = req.params;
   try {
     const deletedUser = await UsersModel.findByIdAndDelete(userId);

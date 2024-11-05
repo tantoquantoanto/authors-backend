@@ -6,35 +6,71 @@ import { DestinationsContext } from "../contexts/DestinationsContext";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import DestinationsHero from "./components/Destinations/DestinationsHero";
+import useSession from "../hooks/useSession";
 
 const DestinationsPage = () => {
   const {
     page,
     setPage,
     approvedDestinations,
+    notApprovedDestinations,
     isLoading,
     setIsLoading,
     totalPages,
     pageSize,
   } = useContext(DestinationsContext);
 
+const session = useSession();
+const isAdmin = session.role === "admin";
+console.log(session);
 
   return (
     <>
       <NavBar />
-      <DestinationsHero />
+      {!isAdmin && <DestinationsHero />}
       <Container className="py-4">
         <Row>
-          {approvedDestinations.map((destination) => (
-            <DestinationCard
-              key={destination._id}
-              img={destination.img}
-              name={destination.name}
-              location={destination.location}
-              category={destination.category}
-              id={destination._id}
-            />
-          ))}
+          {isAdmin ? (
+            <>
+              <h2>Destinazioni Approvate</h2>
+              {approvedDestinations.map((destination) => (
+                <DestinationCard
+                  key={destination._id}
+                  img={destination.img}
+                  name={destination.name}
+                  location={destination.location}
+                  category={destination.category}
+                  id={destination._id}
+                />
+              ))}
+
+              <h2>Destinazioni Non Approvate</h2>
+              {notApprovedDestinations.map((destination) => (
+                <DestinationCard
+                  key={destination._id}
+                  img={destination.img}
+                  name={destination.name}
+                  location={destination.location}
+                  category={destination.category}
+                  id={destination._id}
+                />
+              ))}
+            </>
+          ) : (
+            <>
+              <h2>Destinazioni Approvate</h2>
+              {approvedDestinations.map((destination) => (
+                <DestinationCard
+                  key={destination._id}
+                  img={destination.img}
+                  name={destination.name}
+                  location={destination.location}
+                  category={destination.category}
+                  id={destination._id}
+                />
+              ))}
+            </>
+          )}
         </Row>
         <Row className="mt-4 justify-content-center">
           <ResponsivePagination
@@ -48,4 +84,5 @@ const DestinationsPage = () => {
     </>
   );
 };
+
 export default DestinationsPage;

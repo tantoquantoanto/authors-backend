@@ -13,7 +13,6 @@ import DestinationDetails from "./components/Destinations/DestinationDetails";
 import { DestinationsProvider } from "../contexts/DestinationsContext";
 import Contatti from "./pages/Contatti";
 import DestinationsPage from "./DestinationsPage";
-import AdminDestinationsComponent from "./components/Destinations/AdminDestinationsComponent";
 import { ProtectedRoutes } from "../middleWares/ProtectedRoutes";
 
 function App() {
@@ -23,21 +22,17 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route exact path="/" element={<Login />} />
-            <Route path="/destinations" element={<DestinationsPage />} />
-            <Route
-              path="/destinations/:destinationId"
-              element={<DestinationDetails />}
-            />
-            <Route path="/contatti" element={<Contatti />} />
-            <Route
-              path="/create-new-destination"
-              element={<NewDestinationsForm />}
-            />
-            <Route
-              path="/admin-destinations"
-              element={<AdminDestinationsComponent />}
-            />
             <Route element={<ProtectedRoutes />}>
+              <Route path="/destinations" element={<DestinationsPage />} />
+              <Route
+                path="/destinations/:destinationId"
+                element={<DestinationDetails />}
+              />
+              <Route path="/contatti" element={<Contatti />} />
+              <Route
+                path="/create-new-destination"
+                element={<NewDestinationsForm />}
+              />
               <Route path="/home" element={<HomePage />} />
               <Route path="/create-new-users" element={<NewUsersForm />} />
               <Route path="/users/:userId" element={<UserDetails />} />

@@ -4,6 +4,7 @@ import UserCard from "./UserCard";
 import ResponsivePagination from "react-responsive-pagination";
 import "react-responsive-pagination/themes/classic.css";
 import { useNavigate } from "react-router-dom";
+import useSession from "../../hooks/useSession";
 
 const HomeMain = () => {
   const [usersData, setUsersData] = useState([]);
@@ -13,14 +14,18 @@ const HomeMain = () => {
   const [pageSize, setPageSize] = useState(3);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
-
+  const session = useSession();
+  const token = session ? session.token : null;
   const getUsersFromApi = async () => {
     setIsUsersLoading(true);
     try {
       const response = await fetch(
-        `${
-          import.meta.env.VITE_SERVER_BASE_URL
-        }/users?page=${page}&pageSize=${pageSize}`
+       `${import.meta.env.VITE_SERVER_BASE_URL}/users?page=${page}&pageSize=${pageSize}`, 
+  {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  }
       );
       const data = await response.json();
       setUsersData(data.users);

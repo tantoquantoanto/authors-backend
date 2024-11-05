@@ -1,36 +1,46 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import useSession from "../../hooks/useSession";
 
 const UserDetails = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   const { userId } = useParams();
   const [user, setUser] = useState(null);
+  const session = useSession(); // Ottieni la sessione decodificata
+  const token = session ? localStorage.getItem("Authorization") : null; // Recupera il token
 
   const getUserFromApi = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${userId}`
+        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${userId}`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`, // Usa il token qui
+          },
+        }
       );
+
       const data = await response.json();
-      console.log(data); 
-      setUser(data.user); 
+      console.log(data);
+      setUser(data.user);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getUserFromApi();
-  }, [userId]);
+    if (token) {
+      getUserFromApi();
+    }
+  }, [token, userId]); // Aggiungi token alle dipendenze
 
   const goToUpdateUserPage = () => {
-    navigate(`/users/update/${userId}`)
-
-  }
+    navigate(`/users/update/${userId}`);
+  };
 
   if (!user) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -40,7 +50,7 @@ const UserDetails = () => {
           <Card className="shadow-sm">
             <Card.Img
               variant="top"
-              src="https://via.placeholder.com/150" 
+              src="https://via.placeholder.com/150"
               style={{ objectFit: "cover", height: "300px" }}
             />
             <Card.Body>

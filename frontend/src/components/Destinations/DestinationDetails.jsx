@@ -3,24 +3,27 @@ import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import DestinationsEditingModal from "../Destinations/DestinationsEditingModal";
 import { DestinationsContext } from "../../../contexts/DestinationsContext";
+import useSession from "../../../hooks/useSession";
 
 const DestinationDetails = () => {
   const { getSingleDestination, singleDestination, isLoading, setApprovedDestinations, setNotApprovedDestinations } =
     useContext(DestinationsContext);
   const { destinationId } = useParams();
   const [showModal, setShowModal] = useState(false);
-  const[editable, setEditable] = useState(false);
-  const [approval, setApproval] = useState(false);
+  const token = localStorage.getItem("Authorization")
+  const {role : userRole } = useSession();
+ 
 
+      
 
-  const handleApproval = async () => {
-      }
   
       const updateDestinationApproval = async (isApproved) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/approve/${destinationId}`, {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json",
+                   Authorization: `Bearer ${token}`
+                 },
                 body: JSON.stringify({ approved: isApproved })
             });
     
@@ -53,14 +56,7 @@ const DestinationDetails = () => {
 
 
 
-  const toggleEditButton = (user) => {
-    if(user ==="admin") {
-      setEditable(true);
-    } else {
-      setEditable(false);
-    }
 
-  }
 
   const showEditingModal = () => {
     setShowModal(true);
@@ -102,21 +98,20 @@ const DestinationDetails = () => {
                 singleDestination.reviews[0].comment && (
                   <Card.Text>{singleDestination.reviews[0].comment} </Card.Text>
                 )}
-              <Button
-                variant="primary"
-                className="mt-3"
-                onClick={showEditingModal}
-              >
-                Edit Destination
-              </Button>
-              {!singleDestination.approved && (
-                <>
-                  <div className="d-flex align-items-center justify-content-center gap-2">
-                  <Button onClick={() => updateDestinationApproval(true)} variant="success" className="mt-3"> Approve Destination </Button>
-                  <Button onClick={() => updateDestinationApproval(false)} variant="danger" className="mt-3"> Discard Destination </Button>
-                  </div>
-                </>
-              )}
+              {userRole === "admin" && (
+  <>
+    <Button variant="primary" className="mt-3" onClick={showEditingModal}>
+      Edit Destination
+    </Button>
+    {!singleDestination.approved && (
+      <div className="d-flex align-items-center justify-content-center gap-2">
+        <Button onClick={() => updateDestinationApproval(true)} variant="success" className="mt-3"> Approve Destination </Button>
+        <Button onClick={() => updateDestinationApproval(false)} variant="danger" className="mt-3"> Discard Destination </Button>
+      </div>
+    )}
+  </>
+)}
+
             </Card.Body>
           </Card>
         </Col>

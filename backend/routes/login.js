@@ -30,9 +30,10 @@ login.post("/login", async (req, res) => {
         role: user.role,
         userName: user.username,
         dob: user.dob,
+        userId: user._id,
         createdAt: user.createdAt
     }, process.env.JWT_SECRET, {
-        expiresIn: '10m'
+        expiresIn: '20m'
     })
 
     res
