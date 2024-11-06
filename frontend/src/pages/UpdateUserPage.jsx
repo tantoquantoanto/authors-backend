@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Container } from "react-bootstrap";
+import { Button, Form, Container, Row, Col } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import useSession from "../../hooks/useSession";
@@ -14,11 +14,11 @@ const UpdateUserPage = () => {
     username: "",
     role: ""
   });
+  const [file, setFile] = useState(null);  // Stato per il file
   const navigate = useNavigate(); 
   const session = useSession(); 
   const token = session ? localStorage.getItem("Authorization") : null; 
 
- 
   const getUserFromApi = async () => {
     try {
       const response = await fetch(
@@ -43,12 +43,10 @@ const UpdateUserPage = () => {
     }
   };
 
- 
   useEffect(() => {
     getUserFromApi();
   }, [userId]);
 
-  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -57,56 +55,85 @@ const UpdateUserPage = () => {
     });
   };
 
-  
-const onSubmit = async (e) => {
-  e.preventDefault();
-  try {
+  // Funzione per gestire il cambio del file
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  // Funzione per caricare l'immagine
+  const uploadFile = async (file) => {
+    const formData = new FormData();
+    formData.append("img", file);
+
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_BASE_URL}/users/update/${userId}`,
+      `${import.meta.env.VITE_SERVER_BASE_URL}/users/upload`,  
       {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`, 
-        },
-        body: JSON.stringify(formData),
+        method: "POST",
+        body: formData,
       }
     );
-    
-    const result = await response.json();
-    console.log(result); 
-    if (result.statusCode === 200) {
+
+    if (!response.ok) throw new Error("Failed to upload image");
+
+    const data = await response.json();
+    return data.img;
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      let imageUrl = user.img; 
+
+      if (file) {
+        try {
+          imageUrl = await uploadFile(file);  
+        } catch (error) {
+          console.error("Image upload failed:", error);
+          return;
+        }
+      }
+
+      const updatedData = { ...formData, img: imageUrl };
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_BASE_URL}/users/update/${userId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, 
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
       
-      Swal.fire({
-        title: 'Successo!',
-        text: 'L\'utente è stato aggiornato con successo.',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-      
-      
-      navigate(`/users/${userId}`);
-    } else {
-     
+      const result = await response.json();
+      if (result.statusCode === 200) {
+        Swal.fire({
+          title: 'Successo!',
+          text: 'L\'utente è stato aggiornato con successo.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+        navigate(`/users/${userId}`);
+      } else {
+        Swal.fire({
+          title: 'Errore!',
+          text: result.message || 'Si è verificato un errore durante l\'aggiornamento.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    } catch (error) {
+      console.log(error);
       Swal.fire({
         title: 'Errore!',
-        text: result.message || 'Si è verificato un errore durante l\'aggiornamento.',
+        text: 'Si è verificato un errore durante la richiesta.',
         icon: 'error',
         confirmButtonText: 'OK'
       });
     }
-  } catch (error) {
-    console.log(error);
-   
-    Swal.fire({
-      title: 'Errore!',
-      text: 'Si è verificato un errore durante la richiesta.',
-      icon: 'error',
-      confirmButtonText: 'OK'
-    });
-  }
-};
-
+  };
 
   if (!user) {
     return <div>Loading...</div>;
@@ -114,6 +141,8 @@ const onSubmit = async (e) => {
 
   return (
     <Container className="mt-5">
+      <Row className="d-flex align-items-center justify-content-center">
+        <Col sm = {12} md = {6}>
       <h2>Update User</h2>
       <Form onSubmit={onSubmit}>
         <Form.Group controlId="formName">
@@ -175,10 +204,17 @@ const onSubmit = async (e) => {
           </Form.Control>
         </Form.Group>
 
-        <Button variant="primary" type="submit">
+        <Form.Group controlId="formImage">
+          <Form.Label>Profile Image</Form.Label>
+          <Form.Control type="file" onChange={handleFileChange} />
+        </Form.Group>
+
+        <Button className="mt-3" variant="primary" type="submit">
           Update User
         </Button>
       </Form>
+      </Col>
+      </Row>
     </Container>
   );
 };

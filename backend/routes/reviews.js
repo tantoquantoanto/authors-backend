@@ -2,6 +2,8 @@ const express = require("express");
 const ReviewsModel = require("../models/ReviewsModel");
 const UsersModel = require("../models/UsersModel");
 const DestinationModel = require("../models/DestinationModel");
+const checkUserRole = require("../middlewares/checkUserRole");
+const verifyToken = require("../middlewares/verifyToken");
 const reviews = express.Router();
 
 
@@ -37,8 +39,8 @@ reviews.get("./reviews/byId/:reviewId", async(req,res, next) => {
 })
 
 
-reviews.post("/reviews/create", async(req,res, next) => {
-    
+reviews.post("/reviews/create" ,async(req,res, next) => {
+  
 try {
     const { rating, comment} = req.body;
     const user = await UsersModel.findOne({_id: req.body.user})

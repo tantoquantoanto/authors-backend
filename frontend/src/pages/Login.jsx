@@ -34,6 +34,12 @@ const Login = () => {
 }
 
 
+const goToGitHubLogin = () => {
+window.location.href = `${import.meta.env.VITE_SERVER_BASE_URL}/auth/github`
+}
+
+
+
  const onSubmit = async (e) => {
     e.preventDefault()
    await loginRequest()
@@ -43,12 +49,15 @@ const Login = () => {
     return (
         <>
        <Container>
-        <Row>
-            <Col>
-<Form onSubmit={onSubmit}>
+        <Row className="d-flex align-items-center justify-content-center">
+            <Col sm ={12} md = {4}>
+<Form onSubmit={onSubmit} className="gap-2">
     <Form.Control type="email" name="email" placeholder="Enter email" onChange={onChangeInput}/>
     <Form.Control type="password" name="password" placeholder="Enter password" onChange={onChangeInput} />
+    <div className="d-flex flex-column align-items-center justify-content-center gap-2 mt-2">
     <Button  variant="primary" type="submit">Accedi</Button>
+    <Button  variant="primary" type="submit" onClick={goToGitHubLogin}>Login con GitHub</Button>
+    </div>
 </Form>
 </Col>
 </Row>

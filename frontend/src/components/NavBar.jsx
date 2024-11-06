@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import DestinationsSearchInput from "./Destinations/DestinationsSearchInput";
 import useSession from "../../hooks/useSession";
 
-const NavBar = () => {
+const NavBar = ({setShowApproved}) => {
 
 const session = useSession()  
 const userId = session ? session.userId : null
@@ -37,16 +37,18 @@ console.log(userId, role);
               <LucidePlane size={20} className="me-1" /> Destinations
             </Nav.Link>)}
             {isAdmin && (<NavDropdown title={<span><LucidePlane size={20} className="me-1" /> Destinations</span>} id="destinations-dropdown">
-              <NavDropdown.Item as={Link} to="/destinations">Approved Destinations</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/destinations">Not Approved Destinations</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(true)}>Approved Destinations</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(false)} >Not Approved Destinations</NavDropdown.Item>
             </NavDropdown>  
 )}
-            <Nav.Link as={Link} to="/login" className="text-dark">
+            {!session && (<Nav.Link as={Link} to="/login" className="text-dark">
               Login
             </Nav.Link>
-            <Nav.Link as={Link} to="/contatti" className="text-dark">
+            )}
+
+            {!isAdmin && (<Nav.Link as={Link} to="/contatti" className="text-dark">
               Contatti
-            </Nav.Link>
+            </Nav.Link>)}
             {session && (<NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
               <NavDropdown.Item as={Link} to={`/users/${userId}`}>My Profile</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/reviews">My Reviews</NavDropdown.Item>

@@ -6,7 +6,7 @@ export const DestinationsContext = createContext();
 export const DestinationsProvider = ({ children }) => {
     const [allDestinations, setAllDestinations] = useState([]);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(6);
+    const [pageSize, setPageSize] = useState(12);
     const [totalPages, setTotalPages] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [singleDestination, setSingleDestination] = useState(null);

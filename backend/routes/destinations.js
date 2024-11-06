@@ -89,7 +89,7 @@ destinations.post(
 
 
 destinations.get("/destinations", checkUserRole, async (req, res, next) => {
-  const { page = 1, pageSize = 6 } = req.query;
+  const { page = 1, pageSize = 12 } = req.query;
 
   // Verifico se l'utente è admin o meno, se non lo è conterà solo i doc in cui approved è true, se no tutti
   const query = req.userRole === "admin" ? {} : { approved: true };

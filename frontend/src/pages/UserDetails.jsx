@@ -46,11 +46,11 @@ const UserDetails = () => {
   return (
     <Container className="mt-5">
       <Row>
-        <Col className="mx-auto">
+        <Col sm = {12} md = {6} className="mx-auto">
           <Card className="shadow-sm">
             <Card.Img
               variant="top"
-              src="https://via.placeholder.com/150"
+              src={user.img}
               style={{ objectFit: "cover", height: "300px" }}
             />
             <Card.Body>

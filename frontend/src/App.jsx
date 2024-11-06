@@ -14,6 +14,7 @@ import Contatti from "./pages/Contatti";
 import { ProtectedRoutes } from "../middleWares/ProtectedRoutes";
 import DestinationsPage from "./DestinationsPage";
 import OpenDestinationsPage from "./pages/OpenDestinationsPage";
+import SuccessLoginPage from "./pages/SuccessLoginPage";
 
 
 function App() {
@@ -27,15 +28,16 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/contatti" element={<Contatti />} />
             <Route path="/create-new-users" element={<NewUsersForm />} />
+            <Route path="success/:token" element = {<SuccessLoginPage/>} />
+            <Route
+                path="/destinations/:destinationId"
+                element={<DestinationDetails />}
+              />
 
             <Route element={<ProtectedRoutes />}>
               <Route
                 path="/create-new-destination"
                 element={<NewDestinationsForm />}
-              />
-              <Route
-                path="/destinations/:destinationId"
-                element={<DestinationDetails />}
               />
               <Route path="/destinations" element={<DestinationsPage />} />
               <Route path="/users/:userId" element={<UserDetails />} />

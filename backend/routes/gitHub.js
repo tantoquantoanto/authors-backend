@@ -55,7 +55,7 @@ passport.use(
     )
 );
 
-github.get('/auth/github', passport.authenticate('github', {scope: ['user:email']}), async (req, res, next) => {
+github.get('/auth/github', passport.authenticate('github', {scope: ['user:email']}), (req, res, next) => {
     const redirectUrl = `http://localhost:5173/success?user=${encodeURIComponent(JSON.stringify(req.user))}`
     res.redirect(redirectUrl)
 })
@@ -63,7 +63,7 @@ github.get('/auth/github', passport.authenticate('github', {scope: ['user:email'
 github.get(
     '/auth/github/callback',
     passport.authenticate('github', {failureRedirect: '/'}),
-    async (req, res, next) => {
+   (req, res, next) => {
         const user = req.user;
 
         console.log(user)
