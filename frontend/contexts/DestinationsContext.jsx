@@ -12,17 +12,15 @@ export const DestinationsProvider = ({ children }) => {
     const [singleDestination, setSingleDestination] = useState(null);
     const [approvedDestinations, setApprovedDestinations] = useState([]);
     const [notApprovedDestinations, setNotApprovedDestinations] = useState([]);
-  
-
+    const token = localStorage.getItem("Authorization"); 
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+   
     const getDestinationsFromApi = async () => {
         try {
             setIsLoading(true);
-            const token = localStorage.getItem("Authorization"); 
             const url = `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/?page=${page}&pageSize=${pageSize}`;
-            const response = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${token}` 
-                }
+            const response = await fetch(url,  {
+                headers
             });
 
             if (!response.ok) {
@@ -45,7 +43,7 @@ export const DestinationsProvider = ({ children }) => {
 
     useEffect(() => {
         getDestinationsFromApi();
-    }, [page, pageSize]);
+    }, [page, pageSize, token]);
 
     const getSingleDestination = async (destinationId) => {
         try {
@@ -67,10 +65,12 @@ export const DestinationsProvider = ({ children }) => {
     const updateSingleDestination = async (destinationId, updatedData) => {
         try {
             setIsLoading(true);
+            const token = localStorage.getItem("Authorization"); 
             const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/update/${destinationId}`, {
                 method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(updatedData)
             });

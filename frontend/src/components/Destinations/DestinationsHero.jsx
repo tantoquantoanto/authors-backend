@@ -4,6 +4,8 @@ import { Button, Card, Col, Container, Row } from "react-bootstrap";
 import "../componentscss/destinationsHero.css"
 
 const DestinationsHero = () => {
+
+    
     const { approvedDestinations } = useContext(DestinationsContext);
 
     if (!approvedDestinations || approvedDestinations.length === 0) {

@@ -12,7 +12,7 @@ const isUserAuthorizedToProfile = (req, res, next) => {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decodedToken.userId;
 
-        // Verifica se l'ID utente nella richiesta corrisponde a quello nel token
+        // Verifico se l'ID utente nella richiesta corrisponde a quello nel token
         if (userId !== req.params.userId) {
             return res.status(403).send({ statusCode: 403, message: "You cannot access this profile" });
         }

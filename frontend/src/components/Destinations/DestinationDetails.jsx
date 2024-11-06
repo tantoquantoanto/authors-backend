@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import DestinationsEditingModal from "../Destinations/DestinationsEditingModal";
 import { DestinationsContext } from "../../../contexts/DestinationsContext";
 import useSession from "../../../hooks/useSession";
+import Swal from 'sweetalert2';
 
 const DestinationDetails = () => {
   const { getSingleDestination, singleDestination, isLoading, setApprovedDestinations, setNotApprovedDestinations } =
@@ -14,6 +15,30 @@ const DestinationDetails = () => {
   const {role : userRole } = useSession();
  
 
+
+  const deleteDestination = async () => {
+    try {
+    
+        const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/delete/${destinationId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+      
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete destination");
+        }
+
+        const data = await response.json();
+
+
+    } catch (error) {
+        console.error("Update failed:", error);
+    } 
+};
       
 
   
@@ -35,6 +60,7 @@ const DestinationDetails = () => {
     
             if (isApproved) {
                 // lo aggiungo alle destinazioni approvate
+                Swal.fire("Successo!", "Destinazione approvata con successo.", "success"); 
                 setApprovedDestinations((prev) => [...prev, data.updatedDestination]);
                 // lo tolgo da quelle non approvate filtrando quelle con diverso id
                 setNotApprovedDestinations((prev) =>
@@ -42,6 +68,9 @@ const DestinationDetails = () => {
                 );
             } else {
                //stessa cosa al contrario
+               Swal.fire("Successo!", "Destinazione scartata con successo.", "success"); 
+               //ed elimino la destinazione proposta
+               deleteDestination()
                 setNotApprovedDestinations((prev) => [...prev, data.updatedDestination]);
                 setApprovedDestinations((prev) =>
                     prev.filter((dest) => dest._id !== destinationId)

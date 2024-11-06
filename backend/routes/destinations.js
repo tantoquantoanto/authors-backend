@@ -90,32 +90,34 @@ destinations.post(
 
 destinations.get("/destinations", checkUserRole, async (req, res, next) => {
   const { page = 1, pageSize = 6 } = req.query;
+
+  // Verifico se l'utente è admin o meno, se non lo è conterà solo i doc in cui approved è true, se no tutti
   const query = req.userRole === "admin" ? {} : { approved: true };
 
   try {
-    const totalDestinations = await DestinationModel.countDocuments(query);
-    const totalPages = Math.ceil(totalDestinations / pageSize);
-    const destinations = await DestinationModel.find(query)
-      .limit(pageSize)
-      .skip((page - 1) * pageSize)
-      .populate({ path: "reviews" })
-      .populate({ path: "user", select: "name surname" });
+      const totalDestinations = await DestinationModel.countDocuments(query);
+      const totalPages = Math.ceil(totalDestinations / pageSize);
+      const destinations = await DestinationModel.find(query)
+          .limit(pageSize)
+          .skip((page - 1) * pageSize)
+          .populate({ path: "reviews" })
+          .populate({ path: "user", select: "name surname" });
 
-    if (destinations.length === 0) {
-      return res
-        .status(404)
-        .send({ statusCode: 404, message: "No destinations found" });
-    }
+      if (destinations.length === 0) {
+          return res
+              .status(404)
+              .send({ statusCode: 404, message: "No destinations found" });
+      }
 
-    res.status(200).send({
-      statusCode: 200,
-      message: `${destinations.length} destinations found successfully`,
-      totalDestinations: totalDestinations,
-      totalPages: totalPages,
-      destinations,
-    });
+      res.status(200).send({
+          statusCode: 200,
+          message: `${destinations.length} destinations found successfully`,
+          totalDestinations: totalDestinations,
+          totalPages: totalPages,
+          destinations,
+      });
   } catch (error) {
-    next(error);
+      next(error);
   }
 });
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
 const NewUsersForm = () => {
   const [formState, setFormState] = useState({});
@@ -65,6 +65,9 @@ const NewUsersForm = () => {
 
   return (
     <>
+    <Container>
+      <Row className="d-flex align-items-center justify-content-center">
+        <Col sm = {12} md = {6}>
       <Form onSubmit={onSubmit} className="mt-5">
         <Row className="mb-3">
           <Form.Group as={Col} controlId="formName">
@@ -141,6 +144,9 @@ const NewUsersForm = () => {
           Submit
         </Button>
       </Form>
+      </Col>
+      </Row>
+      </Container>
     </>
   );
 };

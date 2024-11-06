@@ -1,18 +1,19 @@
 const jwt = require("jsonwebtoken");
-//controllo se c'è un token e da userRole alla request da usare nelle routes
+
+
 const checkUserRole = (req, res, next) => {
     const authorizationHeader = req.header("Authorization");
     const token = authorizationHeader && authorizationHeader.split(" ")[1];
 
+    
     if (!token) {
-        return res.status(403).send({ statusCode: 403, message: "Unauthorized access, token missing" });
+        req.userRole = "user"; 
+        return next();
     }
 
     try {
-       
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        // Aggiungo il ruolo dello user alla richiesta
         req.userRole = decoded.role;
 
         next();

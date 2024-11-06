@@ -25,7 +25,7 @@ const Login = () => {
       const data = await response.json()
       if (response.ok) {
         localStorage.setItem('Authorization', data.token);
-          navigate('/home', {replace: true})
+          navigate('/destinations', {replace: true})
       }
       return response
   } catch (e) {
