@@ -16,7 +16,7 @@ const DestinationDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const token = localStorage.getItem("Authorization");
-  const session = useSession(false);
+  const session = useSession();
   const userRole  = session ? session.role : null;
   const isAdmin = userRole ? userRole === "admin": null;
   const isUser = userRole ? userRole === "user": null;
@@ -41,7 +41,7 @@ const DestinationDetails = () => {
 
       const data = await response.json();
     } catch (error) {
-      console.error("Update failed:", error);
+      console.error("Failed to delete:", error);
     }
   };
 
@@ -91,7 +91,7 @@ const DestinationDetails = () => {
 
   useEffect(() => {
     getSingleDestination(destinationId);
-  }, [destinationId]);
+  }, [destinationId ]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -147,7 +147,7 @@ const DestinationDetails = () => {
             </Card>
           </Col>
 
-          {isUser || isAdmin && (
+          {session && (
             <Col md={8} lg={6}>
               <h3>Reviews</h3>
               {singleDestination.reviews && singleDestination.reviews.length > 0 ? (

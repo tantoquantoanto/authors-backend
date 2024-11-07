@@ -73,20 +73,44 @@ google.get(
 google.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    const user = req.user;
-    console.log(user);
-    const token = jwt.sign(user, process.env.JWT_SECRET);
-    const redirectUrl = `http://localhost:5173/success/${encodeURIComponent(
-      token
-    )}`;
-    res.redirect(redirectUrl);
+  async (req, res) => {
+    try {
+      // Cerca l'utente nel database per ottenere il suo ID o per salvarlo se non esiste ancora
+      let user = await UsersModel.findOne({ email: req.user._json.email });
+
+      if (!user) {
+        const newUser = new UsersModel({
+          name: req.user._json.given_name,
+          surname: req.user._json.family_name,
+          username: `${req.user._json.given_name}_${req.user._json.family_name}`,
+          email: req.user._json.email,
+          dob: new Date(),
+          password: "12345678",
+          role: "user",
+          img: req.user._json.picture,
+        });
+        user = await newUser.save();
+      }
+
+      // Creazione del payload per il token JWT
+      const payload = {
+        userId: user._id, // Usa l'id dell'utente del database
+        email: user.email,
+        role: user.role,
+      };
+
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+      // Redirect alla pagina di successo con il token JWT
+      const redirectUrl = `http://localhost:5173/success/${encodeURIComponent(token)}`;
+      res.redirect(redirectUrl);
+    } catch (error) {
+      console.error("Errore durante la generazione del token:", error);
+      res.redirect("/");
+    }
   }
 );
 
-google.get("/success", (req, res) => {
-  res.redirect("http://localhost:5173/home");
-});
 
 google.get("/oauth/logout", (req, res) => {
   req.logout((err) => {

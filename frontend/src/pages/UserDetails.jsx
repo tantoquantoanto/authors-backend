@@ -7,8 +7,7 @@ const UserDetails = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const [user, setUser] = useState(null);
-  const session = useSession(); // Ottieni la sessione decodificata
-  const token = session ? localStorage.getItem("Authorization") : null; // Recupera il token
+  const token = localStorage.getItem("Authorization"); // Recupera il token
 
   const getUserFromApi = async () => {
     try {

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import ClipLoader from "react-spinners/ClipLoader";
 import { useUpdateDestination } from "../../../hooks/useUpdateDestination";
+import { useSingleDestination } from "../../../hooks/useSingleDestination";
 
 const DestinationsEditingModal = ({ show, handleClose, destination }) => {
   const { updateSingleDestination, loading, error } = useUpdateDestination();
@@ -64,11 +65,14 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
       await updateSingleDestination(destination._id, updatedData);
       Swal.fire("Successo!", "Destinazione aggiornata con successo.", "success");
       handleClose();
+
     } catch (error) {
       console.error("Update failed:", error);
       Swal.fire("Errore!", "Aggiornamento della destinazione fallito.", "error");
     }
   };
+
+
 
   return (
     <Modal show={show} onHide={handleClose}>

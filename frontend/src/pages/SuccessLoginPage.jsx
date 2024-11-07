@@ -5,18 +5,20 @@ import { CheckCircleIcon } from "lucide-react";
 import "./pagescss/successLoginPage.css"; 
 
 const SuccessLoginPage = () => {
-    const { githubToken } = useParams();
+    const { token } = useParams();
     const navigate = useNavigate();
 
-    
     useEffect(() => {
+        if (token) {
+            localStorage.setItem("Authorization", token);
+        }
+
         const timer = setTimeout(() => {
             navigate("/");
-        }, 5000); // Redirect dopo 5 secondi
+        }, 5000);
 
-        return () => clearTimeout(timer); 
-    }, [navigate]);
-
+        return () => clearTimeout(timer);
+    }, [navigate, token]);
     return (
         <Container className="text-center success-login">
             <div className="success-message">

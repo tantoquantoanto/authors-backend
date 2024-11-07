@@ -51,7 +51,7 @@ console.log(userId, role);
             </Nav.Link>)}
             {session && (<NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
               <NavDropdown.Item as={Link} to={`/users/${userId}`}>My Profile</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/reviews">My Reviews</NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/reviews-list">My Reviews</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
             </NavDropdown>)}
