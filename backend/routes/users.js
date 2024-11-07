@@ -8,6 +8,7 @@ const DestinationModel = require("../models/DestinationModel");
 const UsersModel = require("../models/UsersModel");
 const isUserAdmin = require("../middlewares/isUserAdmin");
 const isUserAuthorizedToProfile = require("../middlewares/isUserAuthorizedToProfile");
+const sendConfirmationEmail = require("../middlewares/sendConfirmationEmail");
 
 
 const upload = multer({storage: internalStorage, 
@@ -107,13 +108,14 @@ users.post("/users/create",  async (req, res, next) => {
     });
 
     const savedUser = await newUser.save();
-    res
-      .status(201)
-      .send({
+    req.body = savedUser; // passo l'utente salvato al middleware per l'email di registrazione
+    sendConfirmationEmail(req, res, () => {
+      res.status(201).send({
         statusCode: 201,
         message: "User created successfully",
         savedUser,
       });
+    });
   } catch (error) {
     next(error);
   }
