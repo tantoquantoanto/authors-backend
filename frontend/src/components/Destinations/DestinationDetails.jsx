@@ -1,26 +1,26 @@
 import { useContext, useEffect, useState } from "react";
 import { Card, Col, Container, Row, Button, Modal, Form } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DestinationsEditingModal from "../Destinations/DestinationsEditingModal";
-import { DestinationsContext } from "../../../contexts/DestinationsContext";
 import useSession from "../../../hooks/useSession";
 import Swal from 'sweetalert2';
 import Footer from "../Footer";
 import NavBar from "../NavBar";
 import CreateReviewModal from "../Reviews/CreateReviewModal";
 import "../componentscss/destinationDetails.css"
+import { useSingleDestination } from "../../../hooks/useSingleDestination";
 
 const DestinationDetails = () => {
-  const { getSingleDestination, singleDestination, isLoading, setApprovedDestinations, setNotApprovedDestinations } =
-    useContext(DestinationsContext);
+ const {singleDestination, getSingleDestination, error, loading} = useSingleDestination()
   const { destinationId } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const token = localStorage.getItem("Authorization");
-  const session = useSession();
+  const session = useSession(false);
   const userRole  = session ? session.role : null;
   const isAdmin = userRole ? userRole === "admin": null;
   const isUser = userRole ? userRole === "user": null;
+  const navigate = useNavigate();
   
 
   
@@ -93,7 +93,7 @@ const DestinationDetails = () => {
     getSingleDestination(destinationId);
   }, [destinationId]);
 
-  if (isLoading) {
+  if (loading) {
     return <p>Loading...</p>;
   }
 

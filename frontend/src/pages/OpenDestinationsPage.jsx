@@ -1,16 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import { DestinationsContext } from "../../contexts/DestinationsContext";
-import useSession from "../../hooks/useSession";
 import NavBar from "../components/NavBar";
 import DestinationsHero from "../components/Destinations/DestinationsHero";
 import { Col, Container, Row } from "react-bootstrap";
 import DestinationCard from "../components/Destinations/DestinationCard";
 import ResponsivePagination from "react-responsive-pagination";
 import Footer from "../components/Footer";
+import { useAllDestinations } from "../../hooks/useAllDestinations";
 
 const OpenDestinationsPage = () => {
    
-    const {page, setPage, totalPages, allDestinations} = useContext(DestinationsContext);
+    const {allDestinations, page, setPage, totalPages, error, loading} = useAllDestinations()
     const destinations = allDestinations;
 
 

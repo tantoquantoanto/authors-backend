@@ -17,6 +17,7 @@ const useSession = () => {
         if (!session || isTokenExpired(decodedSession.exp, () => navigate('/'))) {
             navigate("/")
         }
+
     }, [navigate, session]);
 
     return decodedSession

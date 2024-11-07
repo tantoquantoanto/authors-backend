@@ -1,11 +1,11 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import Swal from 'sweetalert2';
 import ClipLoader from "react-spinners/ClipLoader";
-import { DestinationsContext } from "../../../contexts/DestinationsContext"; 
+import { useUpdateDestination } from "../../../hooks/useUpdateDestination";
 
 const DestinationsEditingModal = ({ show, handleClose, destination }) => {
-  const { updateSingleDestination, isLoading, setIsLoading } = useContext(DestinationsContext); 
+  const { updateSingleDestination, loading, error } = useUpdateDestination();
   const [formState, setFormState] = useState({
     name: destination.name,
     description: destination.description,
@@ -47,7 +47,6 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setIsLoading(true); 
     let imageUrl = destination.img;
 
     if (file) {
@@ -55,7 +54,6 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
         imageUrl = await uploadFile(file);
       } catch (error) {
         console.error("Image upload failed:", error);
-        setIsLoading(false); 
         return;
       }
     }
@@ -63,14 +61,12 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
     const updatedData = { ...formState, img: imageUrl };
 
     try {
-      await updateSingleDestination(destination._id, updatedData); 
-      Swal.fire("Successo!", "Destinazione aggiornata con successo.", "success"); 
+      await updateSingleDestination(destination._id, updatedData);
+      Swal.fire("Successo!", "Destinazione aggiornata con successo.", "success");
       handleClose();
     } catch (error) {
       console.error("Update failed:", error);
-      Swal.fire("Errore!", "Aggiornamento della destinazione fallito.", "error"); 
-    } finally {
-      setIsLoading(false); 
+      Swal.fire("Errore!", "Aggiornamento della destinazione fallito.", "error");
     }
   };
 
@@ -80,9 +76,9 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
         <Modal.Title>Modifica Destinazione</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {isLoading ? ( 
+        {loading ? ( // Usa lo stato 'loading' dal hook per mostrare il caricamento
           <div className="d-flex justify-content-center">
-            <ClipLoader color="#007bff" loading={isLoading} size={50} />
+            <ClipLoader color="#007bff" loading={loading} size={50} />
           </div>
         ) : (
           <Form onSubmit={handleSubmit}>

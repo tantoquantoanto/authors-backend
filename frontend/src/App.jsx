@@ -9,7 +9,6 @@ import UserDetails from "./pages/UserDetails";
 import UpdateUserPage from "./pages/UpdateUserPage";
 import NewDestinationsForm from "./components/Destinations/NewDestinationsForm";
 import DestinationDetails from "./components/Destinations/DestinationDetails";
-import { DestinationsProvider } from "../contexts/DestinationsContext";
 import Contatti from "./pages/Contatti";
 import { ProtectedRoutes } from "../middleWares/ProtectedRoutes";
 import DestinationsPage from "./DestinationsPage";
@@ -20,7 +19,7 @@ import SuccessLoginPage from "./pages/SuccessLoginPage";
 function App() {
   return (
     <>
-      <DestinationsProvider>
+      
         <BrowserRouter>
           <Routes>
             
@@ -28,7 +27,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/contatti" element={<Contatti />} />
             <Route path="/create-new-users" element={<NewUsersForm />} />
-            <Route path="success/:token" element = {<SuccessLoginPage/>} />
+            <Route path="/success/:token" element = {<SuccessLoginPage/>} />
             <Route
                 path="/destinations/:destinationId"
                 element={<DestinationDetails />}
@@ -48,7 +47,7 @@ function App() {
             </Route>
           </Routes>
         </BrowserRouter>
-      </DestinationsProvider>
+      
     </>
   );
 }

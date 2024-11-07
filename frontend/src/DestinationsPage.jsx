@@ -1,35 +1,23 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
 import DestinationCard from "./components/Destinations/DestinationCard";
 import { useContext, useState } from "react";
-import { DestinationsContext } from "../contexts/DestinationsContext";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import DestinationsHero from "./components/Destinations/DestinationsHero";
 import useSession from "../hooks/useSession";
 import ResponsivePagination from "react-responsive-pagination";
+import { useAllDestinations } from "../hooks/useAllDestinations";
 
 const DestinationsPage = () => {
-  const {
-    approvedDestinations,
-    notApprovedDestinations,
-    page,
-    setPage, 
-    totalPages, 
-  } = useContext(DestinationsContext);
+ const { allDestinations, page, pageSize, setPage, loading, error, totalPages } = useAllDestinations() 
+ const approvedDestinations = allDestinations.filter(destination => destination.approved === true);
+  const notApprovedDestinations = allDestinations.filter(destination => destination.approved === false)
   
 
   const session = useSession();
   const isAdmin = session.role === "admin";
   const [showApproved, setShowApproved] = useState(true);  
-
- const getDestinationsWithToken = async () => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/`)
-    
-  } catch (error) {
-    
-  }
- }
+  const [notApprovedPage, setNotApprovedPage] = useState(1);
 
 
 
@@ -66,7 +54,7 @@ const DestinationsPage = () => {
               <Col md={12}>
                 <h2>Destinazioni Approvate</h2>
                 <Row>
-                  {approvedDestinations.map((destination) => (
+                  {allDestinations.map((destination) => (
                     <Col md={4} key={destination._id} className="mb-3">
                       <DestinationCard
                         img={destination.img}

@@ -19,14 +19,16 @@ const destinationsRoutes = require("./routes/destinations")
 const reviewsRoutes = require("./routes/reviews")
 const emailRoutes = require("./routes/emails")
 const githubRoutes = require("./routes/gitHub")
+const googleRoutes = require("./routes/google")
 
 
 server.use("/", usersRoutes);
 server.use("/", loginRoutes);
 server.use("/", destinationsRoutes);
-server.use("/", reviewsRoutes)
+server.use("/", reviewsRoutes);
 server.use("/", emailRoutes);
-server.use("/", githubRoutes)
+server.use("/", githubRoutes);
+server.use("/", googleRoutes);
 
 
 mongoose.connect(process.env.MONGODB_URI);
