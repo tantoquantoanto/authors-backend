@@ -26,5 +26,5 @@ export const useSingleDestination = () => {
             setLoading(false);
         }
     };
-    return {singleDestination, setSingleDestination, error, loading, getSingleDestination};
+    return {singleDestination, setSingleDestination, error, loading, setLoading, setError, getSingleDestination};
 }

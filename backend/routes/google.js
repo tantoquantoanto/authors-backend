@@ -102,7 +102,7 @@ google.get(
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
 
       // Redirect alla pagina di successo con il token JWT
-      const redirectUrl = `http://localhost:5173/success/${encodeURIComponent(token)}`;
+      const redirectUrl = `${process.env.VITE_CLIENT_BASE_URL}/success/${encodeURIComponent(token)}`;
       res.redirect(redirectUrl);
     } catch (error) {
       console.error("Errore durante la generazione del token:", error);

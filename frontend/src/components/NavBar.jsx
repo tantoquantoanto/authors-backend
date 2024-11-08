@@ -49,12 +49,19 @@ console.log(userId, role);
             {!isAdmin && (<Nav.Link as={Link} to="/contatti" className="text-dark">
               Contatti
             </Nav.Link>)}
-            {session && (<NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
+            {session && !isAdmin && (<NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
               <NavDropdown.Item as={Link} to={`/users/${userId}`}>My Profile</NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/reviews-list">My Reviews</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
             </NavDropdown>)}
+            {session && isAdmin && (
+              <NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
+              <NavDropdown.Item as={Link} to={`/users/${userId}`}>My Profile</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
+            </NavDropdown>
+            )}
             {!session && (
               <>
             <Nav.Link as={Link} to="/create-new-users" className="text-dark">

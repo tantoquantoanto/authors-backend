@@ -9,9 +9,10 @@ import NavBar from "../NavBar";
 import CreateReviewModal from "../Reviews/CreateReviewModal";
 import "../componentscss/destinationDetails.css"
 import { useSingleDestination } from "../../../hooks/useSingleDestination";
+import RotateLoaderComponent from "../Loaders/RotateLoaderComponent";
 
 const DestinationDetails = () => {
- const {singleDestination, getSingleDestination, error, loading} = useSingleDestination()
+ const {singleDestination, getSingleDestination, error, loading, setLoading, setError} = useSingleDestination()
   const { destinationId } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -27,6 +28,7 @@ const DestinationDetails = () => {
 
   const deleteDestination = async () => {
     try {
+      setLoading(true)
       const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/delete/${destinationId}`, {
         method: "DELETE",
         headers: {
@@ -37,16 +39,21 @@ const DestinationDetails = () => {
 
       if (!response.ok) {
         throw new Error("Failed to delete destination");
+        
       }
 
       const data = await response.json();
     } catch (error) {
       console.error("Failed to delete:", error);
     }
+    finally {
+      setLoading(false)
+    }
   };
 
   const updateDestinationApproval = async (isApproved) => {
     try {
+      setLoading(true)
       const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/approve/${destinationId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -76,6 +83,9 @@ const DestinationDetails = () => {
     } catch (error) {
       console.error(error);
     }
+    finally {
+      setLoading(false)
+    }
   };
 
   const showEditingModal = () => {
@@ -94,7 +104,7 @@ const DestinationDetails = () => {
   }, [destinationId ]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <RotateLoaderComponent/>;
   }
 
   if (!singleDestination) {
@@ -102,12 +112,16 @@ const DestinationDetails = () => {
   }
 
   return (
+
+
+
+
     <>
       <NavBar />
       <Container className="mt-5">
         <Row className="justify-content-center">
           <Col md={8} lg={6}>
-            <Card className="shadow-sm mb-4">
+            <Card className="shadow-sm mb-4" >
               <Card.Img
                 variant="top"
                 src={singleDestination && singleDestination.img}
@@ -118,17 +132,22 @@ const DestinationDetails = () => {
                 <Card.Text className="text-muted">{singleDestination && singleDestination.location}</Card.Text>
                 <Card.Text className="text-info">{singleDestination && singleDestination.category}</Card.Text>
                 <Card.Text>{singleDestination && singleDestination.description}</Card.Text>
-                {isAdmin && (
+                {isAdmin && singleDestination.approved && (
                   <>
+                   <div className="d-flex flex-column align-items-center justify-content-center gap-2 mt-3">
                     <Button variant="primary" className="mt-3" onClick={showEditingModal}>
                       Edit Destination
                     </Button>
+                    <Button  variant="danger" className="mt-3" onClick = {deleteDestination}>
+                      Delete Destination
+                    </Button>
+                    </div>
                     {!singleDestination.approved && (
                       <div className="d-flex align-items-center justify-content-center gap-2 mt-3">
                         <Button onClick={() => updateDestinationApproval(true)} variant="success">
                           Approve Destination
                         </Button>
-                        <Button onClick={() => updateDestinationApproval(false)} variant="danger">
+                        <Button onClick={() => updateDestinationApproval(false)} className="" variant="danger">
                           Discard Destination
                         </Button>
                       </div>
@@ -152,7 +171,7 @@ const DestinationDetails = () => {
               <h3>Reviews</h3>
               {singleDestination.reviews && singleDestination.reviews.length > 0 ? (
                 singleDestination.reviews.map((review, index) => (
-                  <div key={index} className="mb-3">
+                  <div key={index} className="mb-5 mt-2 ">
                     <p><strong>{review.user.name} {review.user.surname}</strong></p>
                     <p>Rating: {review.rating} / 5</p>
                     <p>{review.comment}</p>

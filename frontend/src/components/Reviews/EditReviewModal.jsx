@@ -61,7 +61,9 @@ const EditReviewModal = ({ show, onHide, review, onUpdate }) => {
         <Button variant="secondary" onClick={onHide}>
           Annulla
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
+        <Button variant="primary" onClick={() => {handleSubmit();
+          onHide()
+        }}>
           Salva modifiche
         </Button>
       </Modal.Footer>

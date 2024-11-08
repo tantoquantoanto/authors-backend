@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import ClipLoader from "react-spinners/ClipLoader";
 import { useUpdateDestination } from "../../../hooks/useUpdateDestination";
 import { useSingleDestination } from "../../../hooks/useSingleDestination";
+import RotateLoaderComponent from "../Loaders/RotateLoaderComponent";
 
 const DestinationsEditingModal = ({ show, handleClose, destination }) => {
   const { updateSingleDestination, loading, error } = useUpdateDestination();
@@ -80,10 +81,8 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
         <Modal.Title>Modifica Destinazione</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {loading ? ( // Usa lo stato 'loading' dal hook per mostrare il caricamento
-          <div className="d-flex justify-content-center">
-            <ClipLoader color="#007bff" loading={loading} size={50} />
-          </div>
+        {loading ? ( 
+         <RotateLoaderComponent/>
         ) : (
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formDestinationName">

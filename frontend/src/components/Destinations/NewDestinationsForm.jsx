@@ -3,10 +3,14 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import "../componentscss/addDestination.css";
 import NavBar from "../NavBar";
 import Footer from "../Footer";
+import RotateLoaderComponent from "../Loaders/RotateLoaderComponent";
+
 
 const NewDestinationsForm = () => {
   const [formState, setFormState] = useState({});
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false)
+  const token = localStorage.getItem("Authorization");
 
   const onChangeFile = (e) => {
     setFile(e.target.files[0]);
@@ -25,16 +29,24 @@ const NewDestinationsForm = () => {
     fileData.append("img", fileToUpload);
 
     try {
+      setLoading(true)
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/upload`,
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+
           body: fileData,
         }
       );
       return await response.json();
     } catch (error) {
       console.log(error.message);
+    }
+    finally{
+      setLoading(false)
     }
   };
 
@@ -43,6 +55,7 @@ const NewDestinationsForm = () => {
 
     if (file) {
       try {
+        setLoading(true)
         const uploadedFile = await uploadFile(file);
         const postFormState = {
           ...formState,
@@ -54,6 +67,7 @@ const NewDestinationsForm = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(postFormState),
           }
@@ -62,13 +76,22 @@ const NewDestinationsForm = () => {
       } catch (error) {
         console.log(error.message);
       }
+      finally{
+        setLoading(false)
+      }
     }
   };
 
   return (
     <>
+    
     <NavBar/>
       <Container className="my-5">
+        {loading ? (
+          <RotateLoaderComponent/>
+
+        ) :(
+          <>
         <div className="image-header mb-4">
           <img
             src="https://www.triptherapy.net/images/easyblog_articles/535/ganapathy-kumar-7782WXBriyM-unsplash.jpg"
@@ -78,7 +101,7 @@ const NewDestinationsForm = () => {
           <h1>Aggiungi una Nuova Destinazione</h1>
         </div>
 
-        <Form encType="multipart/form-data" className="mt-4">
+        <Form encType="multipart/form-data" className="mt-4" onSubmit={submitDestination}>
           <Row className="mb-3">
             <Form.Group as={Col} controlId="formName">
               <Form.Label>Nome</Form.Label>
@@ -139,6 +162,8 @@ const NewDestinationsForm = () => {
             Aggiungi Destinazione
           </Button>
         </Form>
+        </>)
+}
       </Container>
       <Footer/>
     </>

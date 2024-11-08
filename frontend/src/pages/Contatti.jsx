@@ -1,9 +1,13 @@
 import "./pagescss/contatti.css"
 import { Container, Row, Col } from "react-bootstrap";
 import EmailForm from "../components/EmailForm";
+import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
 
 const Contatti = () => {
   return (
+    <>
+    <NavBar/>
     <Container fluid className="contact-page py-5">
       <Row className="justify-content-center">
         <Col md={8} lg={6} className="text-center">
@@ -15,6 +19,8 @@ const Contatti = () => {
         </Col>
       </Row>
     </Container>
+    <Footer/>
+    </>
   );
 };
 

@@ -14,7 +14,8 @@ import { ProtectedRoutes } from "../middleWares/ProtectedRoutes";
 import DestinationsPage from "./DestinationsPage";
 import OpenDestinationsPage from "./pages/OpenDestinationsPage";
 import SuccessLoginPage from "./pages/SuccessLoginPage";
-import UserReviewsList from "./components/Reviews/UserReviewsList";
+import UserReviewsList from "./pages/UserReviewsList";
+
 
 
 function App() {
