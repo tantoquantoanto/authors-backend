@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import ReviewCard from "./ReviewCard"; 
-// import EditReviewModal from "./EditReviewModal"; 
+import ReviewCard from "./ReviewCard";
+import EditReviewModal from "./EditReviewModal";
 import useSession from "../../../hooks/useSession";
 
 const UserReviewsList = () => {
   const [myReviews, setMyReviews] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [selectedReview, setSelectedReview] = useState(null); 
+  const [selectedReview, setSelectedReview] = useState(null);
   const session = useSession();
   const token = localStorage.getItem("Authorization");
   const userId = session ? session.userId : null;
@@ -27,25 +27,22 @@ const UserReviewsList = () => {
       const data = await response.json();
       console.log(data);
 
-      // Filtro le recensioni per l'utente corrente
+      // Filtra le recensioni per l'utente corrente
       const myOwnReviews = data.data.filter(review => review.user && review.user._id === userId);
-      setMyReviews(myOwnReviews)
-      
-      if(myOwnReviews.length === 0){
-        console.log("non hai lasciato nessuna recensione")
-      }
       setMyReviews(myOwnReviews);
+
+      if (myOwnReviews.length === 0) {
+        console.log("Non hai lasciato nessuna recensione");
+      }
     } catch (error) {
       console.error("Something went wrong while fetching your reviews", error.message || error);
     }
   };
 
   useEffect(() => {
-    
+    if (userId && token) {
       getMyReviews();
-      console.log(myReviews)
-
-  
+    }
   }, [userId, token]);
 
   const onDelete = async (reviewId) => {
@@ -96,13 +93,13 @@ const UserReviewsList = () => {
   };
 
   const handleEditReview = (review) => {
-    setSelectedReview(review);  
-    setShowModal(true); 
+    setSelectedReview(review);
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedReview(null); 
+    setSelectedReview(null);
   };
 
   return (
@@ -114,20 +111,19 @@ const UserReviewsList = () => {
             key={review._id}
             review={review}
             onEditReview={handleEditReview}
-            onDeleteReview={onDelete}
+            onDeleteReview ={onDelete}
           />
         ))
       ) : (
         <p>Non hai ancora recensioni.</p>
       )}
 
-      {/* 
       <EditReviewModal
         show={showModal}
         onHide={handleCloseModal}
         review={selectedReview}
         onUpdate={onUpdate}
-      />*/}
+      />
     </div>
   );
 };

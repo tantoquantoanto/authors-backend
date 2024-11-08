@@ -14,7 +14,7 @@ const useSession = () => {
 
 
     useEffect(() => {
-        if (!session || isTokenExpired(decodedSession.exp, () => navigate('/'))) {
+        if (!session || isTokenExpired(decodedSession.exp, () => navigate('/login'))) {
             navigate("/")
         }
 

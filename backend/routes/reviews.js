@@ -90,7 +90,7 @@ reviews.patch("/reviews/update/:reviewId", verifyToken, verifyReviewOwnership, a
   
     try {
       const updatedData = req.body;
-      const options = { new: true };  // Opzioni per restituire il documento aggiornato
+      const options = { new: true };  
   
       const result = await ReviewsModel.findByIdAndUpdate(reviewId, updatedData, options);
   
@@ -106,7 +106,7 @@ reviews.patch("/reviews/update/:reviewId", verifyToken, verifyReviewOwnership, a
   
   
 
-  reviews.delete("/reviews/delete/:reviewId", verifyReviewOwnership, async (req, res, next) => {
+  reviews.delete("/reviews/delete/:reviewId", verifyToken , verifyReviewOwnership, async (req, res, next) => {
     const { reviewId } = req.params;
     try {
       await ReviewsModel.findByIdAndDelete(reviewId);
