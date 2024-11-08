@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReviewCard from "./ReviewCard"; 
-import EditReviewModal from "./EditReviewModal"; 
+// import EditReviewModal from "./EditReviewModal"; 
 import useSession from "../../../hooks/useSession";
 
 const UserReviewsList = () => {
@@ -29,6 +29,8 @@ const UserReviewsList = () => {
 
       // Filtro le recensioni per l'utente corrente
       const myOwnReviews = data.data.filter(review => review.user && review.user._id === userId);
+      setMyReviews(myOwnReviews)
+      
       if(myOwnReviews.length === 0){
         console.log("non hai lasciato nessuna recensione")
       }
@@ -39,9 +41,11 @@ const UserReviewsList = () => {
   };
 
   useEffect(() => {
-    if (userId && token) {
+    
       getMyReviews();
-    }
+      console.log(myReviews)
+
+  
   }, [userId, token]);
 
   const onDelete = async (reviewId) => {
@@ -117,13 +121,13 @@ const UserReviewsList = () => {
         <p>Non hai ancora recensioni.</p>
       )}
 
-      {/* Modale per modificare recensione */}
+      {/* 
       <EditReviewModal
         show={showModal}
         onHide={handleCloseModal}
         review={selectedReview}
         onUpdate={onUpdate}
-      />
+      />*/}
     </div>
   );
 };

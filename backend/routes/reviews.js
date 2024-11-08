@@ -9,7 +9,7 @@ const reviews = express.Router();
 
 reviews.get("/reviews", async (req, res, next) => {
   try {
-    const reviews = await ReviewsModel.find().populate({ path: "user", select: "name surname" });
+    const reviews = await ReviewsModel.find().populate({ path: "user", select: "name surname" }).populate({path: "destination", select: "name" });
     if (reviews.length === 0) {
       return res
         .status(404)

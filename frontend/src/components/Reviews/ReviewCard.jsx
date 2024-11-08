@@ -8,7 +8,7 @@ const ReviewCard = ({ review, onDelete, onEdit }) => {
       <Card className="shadow-sm h-100">
         <Card.Body>
           <Card.Title className="text-primary">
-            {review.destinationName}
+            {review.destination.name}
           </Card.Title>
           <Card.Subtitle className="mb-2 text-muted">
             Rating: {review.rating} / 5
@@ -19,14 +19,13 @@ const ReviewCard = ({ review, onDelete, onEdit }) => {
             <Button
               variant="outline-primary"
               size="sm"
-              onClick={() => onEdit(review._id)}
+
             >
               <Edit size={16} /> Modifica 
             </Button>
             <Button
               variant="outline-danger"
               size="sm"
-              onClick={() => onDelete(review._id)}
             >
               <Trash size={16} /> Elimina 
             </Button>

@@ -153,7 +153,7 @@ const DestinationDetails = () => {
               {singleDestination.reviews && singleDestination.reviews.length > 0 ? (
                 singleDestination.reviews.map((review, index) => (
                   <div key={index} className="mb-3">
-                    <p><strong>{review.name} {review.surname}</strong></p>
+                    <p><strong>{review.user.name} {review.user.surname}</strong></p>
                     <p>Rating: {review.rating} / 5</p>
                     <p>{review.comment}</p>
                   </div>
