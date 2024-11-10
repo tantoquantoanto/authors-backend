@@ -11,7 +11,10 @@ const useSession = () => {
     const decodedSession = session ? jwtDecode(session) : null
 
     const navigate = useNavigate()
-
+    const callBack = () => {
+         navigate('/login')
+        localStorage.removeItem("Authorization")
+    }
 
     useEffect(() => {
         if (!session || isTokenExpired(decodedSession.exp, () => navigate('/login'))) {

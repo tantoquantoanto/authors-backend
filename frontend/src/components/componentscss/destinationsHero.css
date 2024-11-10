@@ -23,7 +23,7 @@
 
 .text-overlay {
     position: absolute;
-    bottom: 20%;
+    bottom: 30%;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;

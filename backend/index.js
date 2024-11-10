@@ -20,6 +20,10 @@ const reviewsRoutes = require("./routes/reviews")
 const emailRoutes = require("./routes/emails")
 const githubRoutes = require("./routes/gitHub")
 const googleRoutes = require("./routes/google")
+const badRequestHandler = require("./middlewares/badRequestHandler");
+const unauthorizedHandler = require("./middlewares/unauthorizedHandler");
+const notFoundHandler = require("./middlewares/notFoundHandler");
+const genericErrorHandler = require("./middlewares/genericErrorHandler")
 
 
 server.use("/", usersRoutes);
@@ -29,6 +33,10 @@ server.use("/", reviewsRoutes);
 server.use("/", emailRoutes);
 server.use("/", githubRoutes);
 server.use("/", googleRoutes);
+server.use(badRequestHandler);
+server.use(unauthorizedHandler);
+server.use(notFoundHandler);
+server.use(genericErrorHandler);
 
 
 mongoose.connect(process.env.MONGODB_URI);

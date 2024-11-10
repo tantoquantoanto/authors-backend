@@ -108,13 +108,12 @@ users.post("/users/create",  async (req, res, next) => {
     });
 
     const savedUser = await newUser.save();
-    req.body = savedUser; // passo l'utente salvato al middleware per l'email di registrazione
-    sendConfirmationEmail(req, res, () => {
-      res.status(201).send({
-        statusCode: 201,
-        message: "User created successfully",
-        savedUser,
-      });
+    await sendConfirmationEmail({ email: savedUser.email, name: savedUser.name });
+
+    res.status(201).send({
+      statusCode: 201,
+      message: "User created successfully",
+      savedUser,
     });
   } catch (error) {
     next(error);
