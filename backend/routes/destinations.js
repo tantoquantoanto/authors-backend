@@ -82,12 +82,12 @@ destinations.post(
     }
   }
 );
+// fetch per destinations approved
 
-destinations.get("/destinations", checkUserRole, async (req, res, next) => {
+destinations.get("/destinations",  async (req, res, next) => {
   const { page = 1, pageSize = 12 } = req.query;
 
-  // Verifico se l'utente è admin o meno, se non lo è conterà solo i doc in cui approved è true, se no tutti
-  const query = req.userRole === "admin" ? {} : { approved: true };
+  const query =  { approved: true };
 
   try {
     const totalDestinations = await DestinationModel.countDocuments(query);
@@ -116,8 +116,48 @@ destinations.get("/destinations", checkUserRole, async (req, res, next) => {
   }
 });
 
-destinations.get("/destinations/:destinationId", async (req, res, next) => {
+
+// route per le not approved, solo per gli admin
+
+
+destinations.get("/destinations/notapproved", checkUserRole, isUserAdmin, async (req, res, next) => {
+  const { page = 1, pageSize = 12 } = req.query;
+
+  const query =  { approved: false };
+
+  try {
+    const totalDestinations = await DestinationModel.countDocuments(query);
+    const totalPages = Math.ceil(totalDestinations / pageSize);
+    const destinations = await DestinationModel.find(query)
+      .limit(pageSize)
+      .skip((page - 1) * pageSize)
+      .populate({ path: "reviews" })
+      .populate({ path: "user", select: "name surname" });
+
+    if (destinations.length === 0) {
+      return res
+        .status(404)
+        .send({ statusCode: 404, message: "No destinations found" });
+    }
+
+    res.status(200).send({
+      statusCode: 200,
+      message: `${destinations.length} destinations found successfully`,
+      totalDestinations: totalDestinations,
+      totalPages: totalPages,
+      destinations,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+
+destinations.get("/destinations/:destinationId",   async (req, res, next) => {
   const { destinationId } = req.params;
+
+   
   try {
     const destination = await DestinationModel.findById(destinationId)
       .populate({ path: "reviews" })
@@ -167,31 +207,42 @@ destinations.get("/destinations/category/:category", async (req, res, next) => {
 });
 
 destinations.get(
-  "/destinations/name/:name",
+  "/destinations/name/:name", 
+  checkUserRole,
   async (req, res, next) => {
     const { name } = req.params;
     const { page = 1, pageSize = 6 } = req.query;
+
+    const keywords = name.split(' ')
+      .map(word => new RegExp(word.trim(), "i")) 
+      .filter(Boolean);
+    const query = {
+      ...(req.userRole !== "admin" ? { approved: true } : {}),
+      name: { $in: keywords } 
+    };
+
     try {
-      const totalDestinations = await DestinationModel.countDocuments();
+      const totalDestinations = await DestinationModel.countDocuments(query);
       const totalPages = Math.ceil(totalDestinations / pageSize);
-      const destinations = await DestinationModel.find({
-        name: { $regex: new RegExp(name, "i") }, // Case insensitive
-      })
+
+      const destinations = await DestinationModel.find(query)
         .limit(pageSize)
         .skip((page - 1) * pageSize)
         .populate({ path: "reviews" })
         .populate({ path: "user", select: "name surname" });
+
       if (destinations.length === 0) {
         return res.status(404).send({
           statusCode: 404,
           message: "No destinations found with the given name",
         });
       }
+
       res.status(200).send({
         statusCode: 200,
         message: "Destinations found successfully",
-        totalDestinations: totalDestinations,
-        totalPages: totalPages,
+        totalDestinations,
+        totalPages,
         destinations,
       });
     } catch (error) {
@@ -199,6 +250,7 @@ destinations.get(
     }
   }
 );
+
 
 destinations.post("/destinations/create", async (req, res, next) => {
   try {

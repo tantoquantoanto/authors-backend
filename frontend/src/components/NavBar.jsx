@@ -4,25 +4,21 @@ import { Link } from "react-router-dom";
 import DestinationsSearchInput from "./Destinations/DestinationsSearchInput";
 import useSession from "../../hooks/useSession";
 
-const NavBar = ({setShowApproved, onSearch}) => {
+const NavBar = ({ setShowApproved, onSearch, showApproved }) => {
+  const session = useSession();  
+  const userId = session ? session.userId : null;
+  const role = session ? session.role : null;
 
-const session = useSession()  
-const userId = session ? session.userId : null
-const role = session ? session.role : null
+  const handleLogOut = () => {
+    localStorage.removeItem("Authorization");
+    window.location.href = "/";
+  };
 
-const handleLogOut = () => {
-  localStorage.removeItem("Authorization");
-  window.location.href ="/";
-}
-
-const isAdmin = role ? role === "admin" : false
-console.log(userId, role);
-
-
+  const isAdmin = role ? role === "admin" : false;
 
   return (
     <Navbar bg="light" variant="light" expand="lg" sticky="top" className="shadow-sm">
-      <Container fluid className="">
+      <Container fluid>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center text-primary">
           <LucidePlane size={28} className="me-2" /> TravelDest
         </Navbar.Brand>
@@ -33,46 +29,59 @@ console.log(userId, role);
               <LucideHome size={20} className="me-1" /> Home
             </Nav.Link>
 
-            {!isAdmin && (<Nav.Link as={Link} to="/" className="text-dark">
-              <LucidePlane size={20} className="me-1" /> Destinations
-            </Nav.Link>)}
-            {isAdmin && (<NavDropdown title={<span><LucidePlane size={20} className="me-1" /> Destinations</span>} id="destinations-dropdown">
-              <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(true)}>Approved Destinations</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(false)} >Not Approved Destinations</NavDropdown.Item>
-            </NavDropdown>  
-)}
-            {!session && (<Nav.Link as={Link} to="/login" className="text-dark">
-              Login
-            </Nav.Link>
+            {!isAdmin && (
+              <Nav.Link as={Link} to="/" className="text-dark">
+                <LucidePlane size={20} className="me-1" /> Destinazioni
+              </Nav.Link>
+            )}
+            
+            {isAdmin && (
+              <NavDropdown title={<span><LucidePlane size={20} className="me-1" /> Destinazioni</span>} id="destinations-dropdown">
+                <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(true)}>Destinazioni approvate</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(false)}>Destinazioni non approvate</NavDropdown.Item>
+              </NavDropdown>
             )}
 
-            {!isAdmin && (<Nav.Link as={Link} to="/contatti" className="text-dark">
-              Contatti
-            </Nav.Link>)}
-            {session && !isAdmin && (<NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
-              <NavDropdown.Item as={Link} to={`/users/${userId}`}>My Profile</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/reviews-list">My Reviews</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
-            </NavDropdown>)}
-            {session && isAdmin && (
-              <NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profile</span>} id="profile-dropdown">
-              <NavDropdown.Item as={Link} to={`/users/${userId}`}>My Profile</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
-            </NavDropdown>
-            )}
             {!session && (
-              <>
-            <Nav.Link as={Link} to="/create-new-users" className="text-dark">
-            Registrati
-          </Nav.Link>
-          </>
+              <Nav.Link as={Link} to="/login" className="text-dark">
+                Login
+              </Nav.Link>
             )}
-            <DestinationsSearchInput
-            onSearch = {onSearch}
+
+            {!isAdmin && (
+              <Nav.Link as={Link} to="/contatti" className="text-dark">
+                Contatti
+              </Nav.Link>
+            )}
+
+            {session && !isAdmin && (
+              <NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profilo</span>} id="profile-dropdown">
+                <NavDropdown.Item as={Link} to={`/users/${userId}`}>Il mio profilo</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/reviews-list">Le mie recensioni</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
+              </NavDropdown>
+            )}
+
+            {session && isAdmin && (
+              <NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profilo</span>} id="profile-dropdown">
+                <NavDropdown.Item as={Link} to={`/users/${userId}`}>Il mio profilo</NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
+              </NavDropdown>
+            )}
+
+            {!session && (
+              <Nav.Link as={Link} to="/create-new-users" className="text-dark">
+                Registrati
+              </Nav.Link>
+            )}
+
+            <DestinationsSearchInput 
+              onSearch={onSearch} // Passiamo la funzione onSearch
             />
           </Nav>
+
           <Nav className="ms-3 d-flex align-items-center">
             <Nav.Link href="https://facebook.com" className="text-primary">
               <LucideFacebook size={20} />

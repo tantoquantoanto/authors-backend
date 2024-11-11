@@ -1,38 +1,40 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
-import DestinationCard from "./components/Destinations/DestinationCard";
-import { useContext, useState } from "react";
-import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
-import DestinationsHero from "./components/Destinations/DestinationsHero";
-import useSession from "../hooks/useSession";
-import ResponsivePagination from "react-responsive-pagination";
-import { useAllDestinations } from "../hooks/useAllDestinations";
+import React, { useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import { useApprovedDestinations } from '../hooks/useApprovedDestinations';
+import { useNotApprovedDestinations } from '../hooks/useNotApprovedDestinations';
+import NavBar from './components/NavBar';
+import DestinationCard from './components/Destinations/DestinationCard';
+import DestinationsHero from './components/Destinations/DestinationsHero';
+import Footer from './components/Footer';
+import ResponsivePagination from 'react-responsive-pagination';
+import useSession from '../hooks/useSession';
 
 const DestinationsPage = () => {
- const { allDestinations, page, pageSize, setPage, loading, error, totalPages } = useAllDestinations() 
- const approvedDestinations = allDestinations.filter(destination => destination.approved === true);
-  const notApprovedDestinations = allDestinations.filter(destination => destination.approved === false)
-  
+  const { approvedDestinations, approvedPage, setApprovedPage, totalApprovedPages, searchApprovedDestinationsByName } = useApprovedDestinations();
+  const { notApprovedDestinations, notApprovedPage, setNotApprovedPage, totalNotApprovedPages, searchNotApprovedDestinationsByName } = useNotApprovedDestinations();
 
   const session = useSession();
-  const isAdmin = session.role === "admin";
+  const isAdmin = session.role === 'admin';
   const [showApproved, setShowApproved] = useState(true);  
-  const [notApprovedPage, setNotApprovedPage] = useState(1);
 
-
+  // Funzione di ricerca condizionale per passare alla NavBar
+  const handleSearch = (name) => {
+    if (showApproved) {
+      searchApprovedDestinationsByName(name); // Funzione per le approvate
+    } else {
+      searchNotApprovedDestinationsByName(name); // Funzione per le non approvate
+    }
+  };
 
   return (
     <>
-      <NavBar 
-      setShowApproved = {setShowApproved}
-      />
+      <NavBar setShowApproved={setShowApproved} onSearch={handleSearch} /> {/* Passiamo la funzione handleSearch alla NavBar */}
       {!isAdmin && <DestinationsHero />}
       <Container className="py-4">
         <Row>
           {isAdmin ? (
             <>
               <Col md={12}>
-               
                 <h2>{showApproved ? "Destinazioni Approvate" : "Destinazioni Non Approvate"}</h2>
                 <Row>
                   {(showApproved ? approvedDestinations : notApprovedDestinations).map((destination) => (
@@ -47,6 +49,11 @@ const DestinationsPage = () => {
                     </Col>
                   ))}
                 </Row>
+                <ResponsivePagination
+                  current={showApproved ? approvedPage : notApprovedPage} // Paginazione condizionale
+                  total={showApproved ? totalApprovedPages : totalNotApprovedPages}
+                  onPageChange={showApproved ? setApprovedPage : setNotApprovedPage} // Paginazione condizionale
+                />
               </Col>
             </>
           ) : (
@@ -54,7 +61,7 @@ const DestinationsPage = () => {
               <Col md={12}>
                 <h2>Destinazioni Approvate</h2>
                 <Row>
-                  {allDestinations.map((destination) => (
+                  {approvedDestinations.map((destination) => (
                     <Col md={4} key={destination._id} className="mb-3">
                       <DestinationCard
                         img={destination.img}
@@ -70,11 +77,6 @@ const DestinationsPage = () => {
             </>
           )}
         </Row>
-        <ResponsivePagination
-                  current={page}
-                  total={totalPages}
-                  onPageChange={setPage}
-                />
       </Container>
       <Footer />
     </>

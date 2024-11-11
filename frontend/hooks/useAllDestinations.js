@@ -36,33 +36,12 @@ export const useAllDestinations = () => {
         }
     };
 
-    // Fetch destinations on mount and when page or pageSize changes
+    
     useEffect(() => {
         getAllDestinationsFromApi();
     }, [page, pageSize, token]);
 
-    const searchDestinationsByName = async (name) => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/name/${name}?page=${page}&pageSize=${pageSize}`,
-                {headers}
-            )
-
-            if(!response.ok){
-                console.log("Sorry, something went wrong while fetching destinations")
-            }
-
-            const data = await response.json();
-            if(data) {
-                setAllDestinations(data.destinations);
-                setTotalPages(data.totalPages);
-            }
-            
-        } catch (error) {
-            
-        }
-        
-
-    }
+    
 
     
     return {
@@ -76,6 +55,5 @@ export const useAllDestinations = () => {
         error,
         totalPages,
         getAllDestinationsFromApi,
-        searchDestinationsByName,
     };
 };

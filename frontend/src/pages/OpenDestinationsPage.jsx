@@ -6,19 +6,21 @@ import DestinationCard from "../components/Destinations/DestinationCard";
 import ResponsivePagination from "react-responsive-pagination";
 import Footer from "../components/Footer";
 import { useAllDestinations } from "../../hooks/useAllDestinations";
+import { useApprovedDestinations } from "../../hooks/useApprovedDestinations";
 
 const OpenDestinationsPage = () => {
-  const { allDestinations, page, setPage, totalPages, error, loading, searchDestinationsByName } = useAllDestinations();
+  
   const [searchResults, setSearchResults] = useState(null);
   
+  const {approvedDestinations, approvedPage, setApprovedPage, totalApprovedPages, searchApprovedDestinationsByName} = useApprovedDestinations()
  
   const handleSearch = async (name) => {
-    const results = await searchDestinationsByName(name); 
+    const results = await searchApprovedDestinationsByName(name); 
     setSearchResults(results); 
   };
 
  
-  const destinationsToDisplay = searchResults || allDestinations; 
+  const destinationsToDisplay = searchResults || approvedDestinations; 
 
   return (
     <>
@@ -40,9 +42,9 @@ const OpenDestinationsPage = () => {
         </Row>
         <Row className="mt-4 justify-content-center">
           <ResponsivePagination
-            current={page}
-            total={totalPages}
-            onPageChange={setPage}
+            current={approvedPage}
+            total={totalApprovedPages}
+            onPageChange={setApprovedPage}
           />
         </Row>
       </Container>
