@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   Col,
@@ -227,26 +227,30 @@ const DestinationDetails = () => {
           </Col>
 
           {session && (
-            <Col md={8} lg={6}>
-              <h3>Reviews</h3>
-              {singleDestination.reviews &&
-              singleDestination.reviews.length > 0 ? (
-                singleDestination.reviews.map((review, index) => (
-                  <div key={index} className="mb-5 mt-2 ">
-                    <p>
-                      <strong>
-                        {review.user && review.user.name && review.user.name} {review.user && review.user.surname && review.user.surname}
-                      </strong>
-                    </p>
-                    <p>Rating: {review && review.rating} / 5</p>
-                    <p>{review && review.comment}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No reviews available.</p>
-              )}
-            </Col>
-          )}
+  <Col md={8} lg={6}>
+    <h3>Reviews</h3>
+    {singleDestination.reviews && singleDestination.reviews.length > 0 ? (
+      singleDestination.reviews.map((review, index) => (
+        <Card key={index} className="mb-4 shadow-sm p-3 rounded">
+          <Card.Body>
+            <Card.Title className="fw-bold mb-2">
+              {review.user && review.user.name} {review.user && review.user.surname}
+            </Card.Title>
+            <Card.Subtitle className="mb-3 text-muted">
+              Rating: {review && review.rating} / 5
+            </Card.Subtitle>
+            <Card.Text style={{ whiteSpace: 'pre-wrap' }}>
+              {review && review.comment}
+            </Card.Text>
+          </Card.Body>
+        </Card>
+      ))
+    ) : (
+      <p>No reviews available.</p>
+    )}
+  </Col>
+)}
+
         </Row>
 
         {/* Modale per lasciare una recensione */}

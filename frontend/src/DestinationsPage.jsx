@@ -10,25 +10,28 @@ import ResponsivePagination from 'react-responsive-pagination';
 import useSession from '../hooks/useSession';
 
 const DestinationsPage = () => {
-  const { approvedDestinations, approvedPage, setApprovedPage, totalApprovedPages, searchApprovedDestinationsByName } = useApprovedDestinations();
-  const { notApprovedDestinations, notApprovedPage, setNotApprovedPage, totalNotApprovedPages, searchNotApprovedDestinationsByName } = useNotApprovedDestinations();
+  const { approvedDestinations, approvedPage, setApprovedPage, totalApprovedPages, searchApprovedDestinationsByName, resetApprovedDestinations } = useApprovedDestinations();
+  const { notApprovedDestinations, notApprovedPage, setNotApprovedPage, totalNotApprovedPages, searchNotApprovedDestinationsByName, resetNotApprovedDestinations } = useNotApprovedDestinations();
 
   const session = useSession();
   const isAdmin = session.role === 'admin';
   const [showApproved, setShowApproved] = useState(true);  
 
-  // Funzione di ricerca condizionale per passare alla NavBar
+ 
   const handleSearch = (name) => {
+
     if (showApproved) {
-      searchApprovedDestinationsByName(name); // Funzione per le approvate
+      resetApprovedDestinations();
+      searchApprovedDestinationsByName(name); 
     } else {
-      searchNotApprovedDestinationsByName(name); // Funzione per le non approvate
+      resetNotApprovedDestinations();
+      searchNotApprovedDestinationsByName(name); 
     }
   };
 
   return (
     <>
-      <NavBar setShowApproved={setShowApproved} onSearch={handleSearch} /> {/* Passiamo la funzione handleSearch alla NavBar */}
+      <NavBar setShowApproved={setShowApproved} onSearch={handleSearch} /> 
       {!isAdmin && <DestinationsHero />}
       <Container className="py-4">
         <Row>

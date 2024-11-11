@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { LucidePlane } from "lucide-react"; // Importiamo l'icona del logo
+import { LucidePlane } from "lucide-react"; 
 
 
 const Login = () => {

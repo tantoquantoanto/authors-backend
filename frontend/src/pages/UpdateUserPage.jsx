@@ -14,7 +14,7 @@ const UpdateUserPage = () => {
     username: "",
     role: ""
   });
-  const [file, setFile] = useState(null);  // Stato per il file
+  const [file, setFile] = useState(null); 
   const navigate = useNavigate(); 
   const session = useSession(); 
   const token = session ? localStorage.getItem("Authorization") : null; 
@@ -55,12 +55,11 @@ const UpdateUserPage = () => {
     });
   };
 
-  // Funzione per gestire il cambio del file
+  
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  // Funzione per caricare l'immagine
   const uploadFile = async (file) => {
     const formData = new FormData();
     formData.append("img", file);

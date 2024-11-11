@@ -15,7 +15,7 @@ const verifyReviewOwnership = async (req, res, next) => {
   
       next();
     } catch (error) {
-      console.error(error); // Log the error for debugging purposes
+      console.error(error); 
       return res.status(500).send({ statusCode: 500, message: "Server error while verifying review ownership" });
     }
   };

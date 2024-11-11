@@ -41,6 +41,9 @@ export const useApprovedDestinations = () => {
         getApprovedDestinationsFromApi();
     }, [approvedPage, approvedPageSize, token]);
 
+
+    const resetApprovedDestinations = () => setApprovedDestinations([]);
+
     const searchApprovedDestinationsByName = async (name) => {
         try {
             const response = await fetch(
@@ -58,8 +61,8 @@ export const useApprovedDestinations = () => {
                 setApprovedDestinations(data.destinations);
                 setTotalApprovedPages(data.totalPages);
             } else {
-                setApprovedDestinations([]); // Pulisci lo stato se non ci sono risultati
-                setTotalApprovedPages(1);    // Resetta le pagine totali
+                setApprovedDestinations([]); 
+                setTotalApprovedPages(1);    
                 console.log("No destinations found with the given name");
             }
         } catch (error) {
@@ -80,5 +83,6 @@ export const useApprovedDestinations = () => {
         error,
         totalApprovedPages,
         searchApprovedDestinationsByName,
+        resetApprovedDestinations
     };
 };

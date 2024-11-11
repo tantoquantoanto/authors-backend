@@ -16,11 +16,11 @@ reviews.get("/reviews", async (req, res, next) => {
         .send({ statusCode: 404, message: "No reviews found" });
     }
 
-    // Inviare sia il messaggio che i dati in un unico oggetto
+    
     return res.status(200).json({
       statusCode: 200,
       message: `${reviews.length} reviews found successfully`,
-      data: reviews, // Aggiungi le recensioni come parte del corpo della risposta
+      data: reviews, 
     });
   } catch (error) {
     next(error);

@@ -75,7 +75,6 @@ google.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   async (req, res) => {
     try {
-      // Cerca l'utente nel database per ottenere il suo ID o per salvarlo se non esiste ancora
       let user = await UsersModel.findOne({ email: req.user._json.email });
 
       if (!user) {
@@ -94,7 +93,7 @@ google.get(
 
       // Creazione del payload per il token JWT
       const payload = {
-        userId: user._id, // Usa l'id dell'utente del database
+        userId: user._id, 
         email: user.email,
         role: user.role,
       };

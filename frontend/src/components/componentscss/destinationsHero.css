@@ -2,6 +2,7 @@
     height: 60vh;
     position: relative;
     overflow: hidden;
+    animation: slideInHero 1s ease-out forwards;
 }
 
 .hero-card {
@@ -16,26 +17,46 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    aspect-ratio: 16 / 9; 
+    aspect-ratio: 16 / 9;
     position: relative;
-    filter: brightness(0.75); /
+    filter: brightness(0.75);
 }
 
 .text-overlay {
     position: absolute;
     bottom: 30%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(100%); 
     text-align: center;
     color: #fff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    animation: slideInText 1s ease-out forwards;
+}
+
+
+@keyframes slideInHero {
+    0% {
+        transform: translateX(-100%); 
+    }
+    100% {
+        transform: translateX(0); 
+    }
+}
+
+
+@keyframes slideInText {
+    0% {
+        transform: translateX(100%); 
+    }
+    100% {
+        transform: translateX(0); 
+    }
 }
 
 .hero-button {
     margin-top: 20px;
     font-size: 1.2rem;
 }
-
 
 @media (max-width: 768px) {
     .destinations-hero {

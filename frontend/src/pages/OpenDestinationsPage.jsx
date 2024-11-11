@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import DestinationsHero from "../components/Destinations/DestinationsHero";
 import { Col, Container, Row } from "react-bootstrap";
@@ -15,6 +15,7 @@ const OpenDestinationsPage = () => {
   const {approvedDestinations, approvedPage, setApprovedPage, totalApprovedPages, searchApprovedDestinationsByName} = useApprovedDestinations()
  
   const handleSearch = async (name) => {
+    setSearchResults([]);
     const results = await searchApprovedDestinationsByName(name); 
     setSearchResults(results); 
   };

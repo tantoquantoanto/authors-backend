@@ -41,6 +41,8 @@ export const useNotApprovedDestinations = () => {
         getNotApprovedDestinationsFromApi();
     }, [notApprovedPage, notApprovedPageSize, token]);
 
+    const resetNotApprovedDestinations = () => setNotApprovedDestinations([]);
+
     const searchNotApprovedDestinationsByName = async (name) => {
         try {
             const response = await fetch(
@@ -81,5 +83,6 @@ export const useNotApprovedDestinations = () => {
         error,
         totalNotApprovedPages,
         searchNotApprovedDestinationsByName,
+        resetNotApprovedDestinations
     };
 };

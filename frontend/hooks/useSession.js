@@ -12,12 +12,14 @@ const useSession = () => {
 
     const navigate = useNavigate()
     const callBack = () => {
-         navigate('/login')
-        localStorage.removeItem("Authorization")
+        localStorage.removeItem("Authorization"); 
+        navigate('/login')
+        
     }
 
     useEffect(() => {
         if (!session || isTokenExpired(decodedSession.exp, () => navigate('/login'))) {
+            callBack;
             navigate("/")
         }
 

@@ -24,7 +24,7 @@ const NavBar = ({ setShowApproved, onSearch, showApproved }) => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
-          <Nav className="ms-auto">
+          <Nav className="ms-auto d-flex align-items-center justify-content-center">
             <Nav.Link as={Link} to="/" className="text-dark">
               <LucideHome size={20} className="me-1" /> Home
             </Nav.Link>
@@ -78,7 +78,7 @@ const NavBar = ({ setShowApproved, onSearch, showApproved }) => {
             )}
 
             <DestinationsSearchInput 
-              onSearch={onSearch} // Passiamo la funzione onSearch
+              onSearch={onSearch} 
             />
           </Nav>
 

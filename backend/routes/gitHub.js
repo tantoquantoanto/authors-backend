@@ -15,30 +15,21 @@ github.use(
     })
 )
 
-// inizializzazione passport
+
 github.use(passport.initialize())
-// Connetto passport con sessione express per persistenza utenti
+
 github.use(passport.session())
 
 
-// Determina come i dati dell'utente vengono memorizzati nella sessione.
-// Qui ad esempio salva in sessione l'intero oggetto USER
+
 passport.serializeUser((user, done) => {
     done(null, user)
 })
 
-// Recupera i dati dell'utente dalla sessione sotto forma di oggetto USER
 passport.deserializeUser((user, done) => {
     done(null, user)
 })
 
-// usiamo la strategy che abbiamo deciso di importare (in questo caso Github)
-/*
-* istanziamo GithubStrategy passando come oggetto di configurazione le chiavi
-* precedentemente create per la nostra OAUTH APP
-*
-* come secondo argomento una callback (vedi documentazione) che restituisce il profilo utente
-* */
 
 passport.use(
     new GitHubStrategy(
@@ -49,7 +40,7 @@ passport.use(
         },
         (accessToken, refreshToken, profile, done) => {
             console.log(profile)
-            // qui dobbiamo eventualmente salvare l'utente!
+            
             return done(null, profile);
         }
     )
