@@ -8,32 +8,36 @@ import Footer from "../components/Footer";
 import { useAllDestinations } from "../../hooks/useAllDestinations";
 
 const OpenDestinationsPage = () => {
-   
-    const {allDestinations, page, setPage, totalPages, error, loading} = useAllDestinations()
-    const destinations = allDestinations;
+  const { allDestinations, page, setPage, totalPages, error, loading, searchDestinationsByName } = useAllDestinations();
+  const [searchResults, setSearchResults] = useState(null);
+  
+ 
+  const handleSearch = async (name) => {
+    const results = await searchDestinationsByName(name); 
+    setSearchResults(results); 
+  };
 
+ 
+  const destinationsToDisplay = searchResults || allDestinations; 
 
-
-
-return (
+  return (
     <>
-      <NavBar/>
-      <DestinationsHero 
-      />
+      <NavBar onSearch={handleSearch} /> 
+      <DestinationsHero />
       <Container className="py-4">
-              <Row>
-                {destinations.map((destination) => (
-                  <Col md={4} key={destination._id} className="mb-3">
-                    <DestinationCard
-                      img={destination.img}
-                      name={destination.name}
-                      location={destination.location}
-                      category={destination.category}
-                      id={destination._id}
-                    />
-                  </Col>
-                ))}
-              </Row>
+        <Row>
+          {destinationsToDisplay.map((destination) => (
+            <Col md={4} key={destination._id} className="mb-3">
+              <DestinationCard
+                img={destination.img}
+                name={destination.name}
+                location={destination.location}
+                category={destination.category}
+                id={destination._id}
+              />
+            </Col>
+          ))}
+        </Row>
         <Row className="mt-4 justify-content-center">
           <ResponsivePagination
             current={page}
@@ -45,7 +49,6 @@ return (
       <Footer />
     </>
   );
-
-}
+};
 
 export default OpenDestinationsPage;

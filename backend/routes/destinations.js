@@ -8,38 +8,36 @@ const internalStorage = require("../middlewares/multer/internalStorage");
 const cloudStorage = require("../middlewares/multer/cloudinary");
 const checkUserRole = require("../middlewares/checkUserRole");
 const isUserAdmin = require("../middlewares/isUserAdmin");
-
-
-
+const isUserUser = require("../middlewares/isUserUser");
 
 //rotta per approvazione post facendo una put per modificare solo approved, accesso solo agli admin con middlewares
-destinations.put("/destinations/approve/:destinationId", checkUserRole, isUserAdmin, async (req, res, next) => {
-  const { destinationId } = req.params;
-  try {
-    const approval = req.body;
-    const updatedDestination = await DestinationModel.findByIdAndUpdate(
-      destinationId,
-      approval,
-      { new: true }
-    );
+destinations.put(
+  "/destinations/approve/:destinationId",
+  checkUserRole,
+  isUserAdmin,
+  async (req, res, next) => {
+    const { destinationId } = req.params;
+    try {
+      const approval = req.body;
+      const updatedDestination = await DestinationModel.findByIdAndUpdate(
+        destinationId,
+        approval,
+        { new: true }
+      );
 
-    if (updatedDestination) {
-      const message = approval.approved
-        ? "Destinazione approvata con successo"
-        : "Destinazione scartata con successo";
-      res.status(200).json({ message, updatedDestination });
-    } else {
-      res.status(404).json({ message: "Destinazione non trovata" });
+      if (updatedDestination) {
+        const message = approval.approved
+          ? "Destinazione approvata con successo"
+          : "Destinazione scartata con successo";
+        res.status(200).json({ message, updatedDestination });
+      } else {
+        res.status(404).json({ message: "Destinazione non trovata" });
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-});
-
-
-
-
-
+);
 
 const cloud = multer({ storage: cloudStorage });
 
@@ -85,9 +83,6 @@ destinations.post(
   }
 );
 
-
-
-
 destinations.get("/destinations", checkUserRole, async (req, res, next) => {
   const { page = 1, pageSize = 12 } = req.query;
 
@@ -95,34 +90,31 @@ destinations.get("/destinations", checkUserRole, async (req, res, next) => {
   const query = req.userRole === "admin" ? {} : { approved: true };
 
   try {
-      const totalDestinations = await DestinationModel.countDocuments(query);
-      const totalPages = Math.ceil(totalDestinations / pageSize);
-      const destinations = await DestinationModel.find(query)
-          .limit(pageSize)
-          .skip((page - 1) * pageSize)
-          .populate({ path: "reviews" })
-          .populate({ path: "user", select: "name surname" });
+    const totalDestinations = await DestinationModel.countDocuments(query);
+    const totalPages = Math.ceil(totalDestinations / pageSize);
+    const destinations = await DestinationModel.find(query)
+      .limit(pageSize)
+      .skip((page - 1) * pageSize)
+      .populate({ path: "reviews" })
+      .populate({ path: "user", select: "name surname" });
 
-      if (destinations.length === 0) {
-          return res
-              .status(404)
-              .send({ statusCode: 404, message: "No destinations found" });
-      }
+    if (destinations.length === 0) {
+      return res
+        .status(404)
+        .send({ statusCode: 404, message: "No destinations found" });
+    }
 
-      res.status(200).send({
-          statusCode: 200,
-          message: `${destinations.length} destinations found successfully`,
-          totalDestinations: totalDestinations,
-          totalPages: totalPages,
-          destinations,
-      });
+    res.status(200).send({
+      statusCode: 200,
+      message: `${destinations.length} destinations found successfully`,
+      totalDestinations: totalDestinations,
+      totalPages: totalPages,
+      destinations,
+    });
   } catch (error) {
-      next(error);
+    next(error);
   }
 });
-
-
-
 
 destinations.get("/destinations/:destinationId", async (req, res, next) => {
   const { destinationId } = req.params;
@@ -174,27 +166,39 @@ destinations.get("/destinations/category/:category", async (req, res, next) => {
   }
 });
 
-destinations.get("/destinations/name/:name", async (req, res, next) => {
-  const { name } = req.params;
-  try {
-    const destinations = await DestinationModel.find({
-      name: { $regex: new RegExp(name, "i") }, // Case insensitive
-    });
-    if (destinations.length === 0) {
-      return res.status(404).send({
-        statusCode: 404,
-        message: "No destinations found with the given name",
+destinations.get(
+  "/destinations/name/:name",
+  async (req, res, next) => {
+    const { name } = req.params;
+    const { page = 1, pageSize = 6 } = req.query;
+    try {
+      const totalDestinations = await DestinationModel.countDocuments();
+      const totalPages = Math.ceil(totalDestinations / pageSize);
+      const destinations = await DestinationModel.find({
+        name: { $regex: new RegExp(name, "i") }, // Case insensitive
+      })
+        .limit(pageSize)
+        .skip((page - 1) * pageSize)
+        .populate({ path: "reviews" })
+        .populate({ path: "user", select: "name surname" });
+      if (destinations.length === 0) {
+        return res.status(404).send({
+          statusCode: 404,
+          message: "No destinations found with the given name",
+        });
+      }
+      res.status(200).send({
+        statusCode: 200,
+        message: "Destinations found successfully",
+        totalDestinations: totalDestinations,
+        totalPages: totalPages,
+        destinations,
       });
+    } catch (error) {
+      next(error);
     }
-    res.status(200).send({
-      statusCode: 200,
-      message: "Destinations found successfully",
-      destinations,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 destinations.post("/destinations/create", async (req, res, next) => {
   try {
@@ -203,9 +207,9 @@ destinations.post("/destinations/create", async (req, res, next) => {
       name: name,
       description: description,
       location: location,
-      category: category, 
+      category: category,
       img: img,
-      approved: false
+      approved: false,
     });
 
     const savedDestination = await newDestination.save();
@@ -216,36 +220,38 @@ destinations.post("/destinations/create", async (req, res, next) => {
   }
 });
 
+destinations.patch(
+  "/destinations/update/:destinationId",
+  checkUserRole,
+  isUserAdmin,
+  async (req, res, next) => {
+    const { destinationId } = req.params;
+    try {
+      const updatedData = req.body;
+      const options = { new: true };
 
+      const result = await DestinationModel.findByIdAndUpdate(
+        destinationId,
+        updatedData,
+        options
+      );
 
-destinations.patch("/destinations/update/:destinationId", checkUserRole, isUserAdmin, async (req, res, next) => {
-  const { destinationId } = req.params;
-  try {
-    const updatedData = req.body;
-    const options = { new: true };
+      if (!result) {
+        return res
+          .status(404)
+          .send({ statusCode: 404, message: "Destination not found" });
+      }
 
-    const result = await DestinationModel.findByIdAndUpdate(
-      destinationId,
-      updatedData,
-      options
-    );
-
-    if (!result) {
-      return res
-        .status(404)
-        .send({ statusCode: 404, message: "Destination not found" });
+      res.status(200).send({
+        statusCode: 200,
+        message: "Destination updated successfully",
+        destination: result,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    res.status(200).send({
-      statusCode: 200,
-      message: "Destination updated successfully",
-      destination: result,
-    });
-  } catch (error) {
-    next(error);
   }
-});
-
+);
 
 destinations.patch("/destinations/updateModel", async (req, res, next) => {
   await DestinationModel.updateMany(
@@ -254,10 +260,10 @@ destinations.patch("/destinations/updateModel", async (req, res, next) => {
   );
 });
 
-
-
 destinations.delete(
-  "/destinations/delete/:destinationId", checkUserRole, isUserAdmin,
+  "/destinations/delete/:destinationId",
+  checkUserRole,
+  isUserAdmin,
   async (req, res, next) => {
     const { destinationId } = req.params;
 

@@ -1,22 +1,38 @@
 import { useState } from "react";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 
-const DestinationsSearchInput = () => {
- 
+const DestinationsSearchInput = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (typeof onSearch === "function") { 
+      onSearch(searchTerm);
+    } else {
+      console.error("onSearch is not a function");
+    }
+  };
 
   return (
-    <Form className="d-flex ms-2">
+  <>
+  <div className="p-2">
+    <Form className="d-flex" onSubmit={handleSearch}>
       <Form.Control
         type="search"
-        name= "destination"
-        placeholder="Search..."
+        placeholder="Search destinations"
         className="me-2"
-        aria-label="Search"
+        value={searchTerm}
+        onChange={handleInputChange}
       />
+      <Button type="submit" variant="primary">Search</Button>
     </Form>
+    </div>
+    </>
   );
 };
 
-export default DestinationsSearchInput
-
+export default DestinationsSearchInput;

@@ -15,7 +15,7 @@ export const useAllDestinations = () => {
 
     const getAllDestinationsFromApi = async () => {
         setLoading(true);
-        setError(null); // Reset error at each request
+        setError(null); 
         try {
             const response = await fetch(
                 `${import.meta.env.VITE_SERVER_BASE_URL}/destinations?page=${page}&pageSize=${pageSize}`,
@@ -41,9 +41,33 @@ export const useAllDestinations = () => {
         getAllDestinationsFromApi();
     }, [page, pageSize, token]);
 
+    const searchDestinationsByName = async (name) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/destinations/name/${name}?page=${page}&pageSize=${pageSize}`,
+                {headers}
+            )
+
+            if(!response.ok){
+                console.log("Sorry, something went wrong while fetching destinations")
+            }
+
+            const data = await response.json();
+            if(data) {
+                setAllDestinations(data.destinations);
+                setTotalPages(data.totalPages);
+            }
+            
+        } catch (error) {
+            
+        }
+        
+
+    }
+
     
     return {
         allDestinations,
+        setAllDestinations,
         page,
         setPage,
         pageSize,
@@ -52,5 +76,6 @@ export const useAllDestinations = () => {
         error,
         totalPages,
         getAllDestinationsFromApi,
+        searchDestinationsByName,
     };
 };

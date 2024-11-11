@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import DestinationsSearchInput from "./Destinations/DestinationsSearchInput";
 import useSession from "../../hooks/useSession";
 
-const NavBar = ({setShowApproved}) => {
+const NavBar = ({setShowApproved, onSearch}) => {
 
 const session = useSession()  
 const userId = session ? session.userId : null
@@ -22,7 +22,7 @@ console.log(userId, role);
 
   return (
     <Navbar bg="light" variant="light" expand="lg" sticky="top" className="shadow-sm">
-      <Container fluid>
+      <Container fluid className="">
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center text-primary">
           <LucidePlane size={28} className="me-2" /> TravelDest
         </Navbar.Brand>
@@ -69,7 +69,9 @@ console.log(userId, role);
           </Nav.Link>
           </>
             )}
-            <DestinationsSearchInput/>
+            <DestinationsSearchInput
+            onSearch = {onSearch}
+            />
           </Nav>
           <Nav className="ms-3 d-flex align-items-center">
             <Nav.Link href="https://facebook.com" className="text-primary">
