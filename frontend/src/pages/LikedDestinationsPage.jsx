@@ -14,6 +14,7 @@ const LikedDestinationsPage = () => {
   const token = localStorage.getItem("Authorization");
   const navigate = useNavigate(); 
 
+ 
   const getLikedDestinations = async () => {
     try {
       setLoading(true);
@@ -42,6 +43,39 @@ const LikedDestinationsPage = () => {
     }
   };
 
+  
+  const handleLikeToggle = async (destinationId) => {
+    try {
+      const isLiked = likedDestinations.some((dest) => dest._id === destinationId);
+
+      if (isLiked) {
+        
+        const response = await fetch(
+          `${import.meta.env.VITE_SERVER_BASE_URL}/users/${userId}/like/${destinationId}`,
+          { method: "DELETE", headers: { "Content-Type": "application/json" } }
+        );
+        
+        if (response.ok) {
+          setLikedDestinations(likedDestinations.filter((dest) => dest._id !== destinationId));
+        }
+      } else {
+        
+        const response = await fetch(
+          `${import.meta.env.VITE_SERVER_BASE_URL}/users/${userId}/like/${destinationId}`,
+          { method: "POST", headers: { "Content-Type": "application/json" } }
+        );
+
+        if (response.ok) {
+          const updatedLikedDestinations = await response.json();
+          setLikedDestinations(updatedLikedDestinations.likedDestinations);
+        }
+      }
+    } catch (error) {
+      console.error("Errore nella gestione dei like:", error);
+    }
+  };
+
+  
   useEffect(() => {
     if (userId) {
       getLikedDestinations();
@@ -82,6 +116,8 @@ const LikedDestinationsPage = () => {
                 location={destination.location}
                 category={destination.category}
                 id={destination._id}
+                isLiked={true} 
+                onLikeToggle={() => handleLikeToggle(destination._id)}
               />
             </Col>
           ))

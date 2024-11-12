@@ -25,7 +25,7 @@ const DestinationsPage = () => {
     totalNotApprovedPages,
     searchNotApprovedDestinationsByName,
     resetNotApprovedDestinations,
-    getNotApprovedDestinationsFromApi
+    getNotApprovedDestinationsFromApi,
   } = useNotApprovedDestinations();
   const session = useSession();
   const isAdmin = session.role === "admin";
@@ -34,21 +34,40 @@ const DestinationsPage = () => {
   const currentPage = showApproved ? approvedPage : notApprovedPage;
   const totalPages = showApproved ? totalApprovedPages : totalNotApprovedPages;
   const setPage = showApproved ? setApprovedPage : setNotApprovedPage;
+  const token = localStorage.getItem("Authorization");
+
+  const fetchLikedDestinations = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${session.userId}/liked-destinations`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setLikedDestinations(data.destinations.map((d) => d._id));
+      } else {
+        console.error("Errore nel recupero delle destinazioni preferite");
+      }
+    } catch (error) {
+      console.error("Errore di rete:", error);
+    }
+  };
 
   const postLikedDestinations = async (destinationId) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${
-          session.userId
-        }/like/${destinationId}`,
+        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${session.userId}/like/${destinationId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
         }
       );
       if (response.ok) {
-        const data = await response.json();
-        setLikedDestinations(data.likedDestinations);
+        setLikedDestinations((prev) => [...prev, destinationId]);
       } else {
         console.error("Errore nell'aggiunta ai preferiti");
       }
@@ -60,17 +79,16 @@ const DestinationsPage = () => {
   const deleteLikedDestinations = async (destinationId) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${
-          session.userId
-        }/like/${destinationId}`,
+        `${import.meta.env.VITE_SERVER_BASE_URL}/users/${session.userId}/like/${destinationId}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
         }
       );
       if (response.ok) {
-        const data = await response.json();
-        setLikedDestinations(data.likedDestinations);
+        setLikedDestinations((prev) =>
+          prev.filter((id) => id !== destinationId)
+        );
       } else {
         console.error("Errore nella rimozione dai preferiti");
       }
@@ -100,11 +118,16 @@ const DestinationsPage = () => {
   };
 
   useEffect(() => {
+    if (session.userId) {
+      fetchLikedDestinations();
+    }
+  }, [session.userId]);
+
+  useEffect(() => {
     if (!showApproved && isAdmin) {
       getNotApprovedDestinationsFromApi();
     }
   }, [showApproved, isAdmin]);
-
 
   return (
     <>
@@ -120,10 +143,7 @@ const DestinationsPage = () => {
                   : "Destinazioni Non Approvate"}
               </h2>
               <Row>
-                {(showApproved
-                  ? approvedDestinations
-                  : notApprovedDestinations
-                ).map((destination) => (
+                {(showApproved ? approvedDestinations : notApprovedDestinations).map((destination) => (
                   <Col xs={12} md={4} key={destination._id} className="mb-3">
                     <DestinationCard
                       img={destination.img}
@@ -161,6 +181,11 @@ const DestinationsPage = () => {
                   </Col>
                 ))}
               </Row>
+              <ResponsivePagination
+                current={approvedPage}
+                total={totalApprovedPages}
+                onPageChange={setApprovedPage}
+              />
             </Col>
           )}
         </Row>
