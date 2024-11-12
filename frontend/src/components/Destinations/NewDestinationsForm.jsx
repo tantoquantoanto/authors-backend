@@ -31,7 +31,7 @@ const NewDestinationsForm = () => {
     try {
       setLoading(true)
       const response = await fetch(
-        `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/upload`,
+        `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/upload/cloud`,
         {
           method: "POST",
           headers: {

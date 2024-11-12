@@ -58,6 +58,7 @@ const NavBar = ({ setShowApproved, onSearch, showApproved }) => {
               <NavDropdown title={<span><LucideUser size={20} className="me-1 text-dark" /> Profilo</span>} id="profile-dropdown">
                 <NavDropdown.Item as={Link} to={`/users/${userId}`}>Il mio profilo</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/reviews-list">Le mie recensioni</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/favourite-destinations">Le mie destinazioni preferite</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogOut}>Logout</NavDropdown.Item>
               </NavDropdown>

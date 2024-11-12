@@ -11,6 +11,7 @@ const isUserAuthorizedToProfile = require("../middlewares/isUserAuthorizedToProf
 const sendConfirmationEmail = require("../middlewares/sendConfirmationEmail");
 
 
+
 const upload = multer({storage: internalStorage, 
     fileFilter: (req, file, cb) => {
         const allowedFileTypes = ["image/png", "image/jpeg"]
@@ -168,5 +169,88 @@ users.delete("/users/delete/:userId", isUserAuthorizedToProfile, async (req, res
     next(error);
   }
 });
+
+users.post("/users/:userId/like/:destinationId", async (req, res, next) => {
+  const { userId, destinationId } = req.params;
+  try {
+    const user = await UsersModel.findById(userId);
+    if (!user) {
+      return res.status(404).send({
+        statusCode: 404,
+        message: "User not found"
+      });
+    }
+
+   
+    if (!user.likedDestinations.includes(destinationId)) {
+      user.likedDestinations.push(destinationId);  
+      await user.save();
+      return res.status(200).send({
+        statusCode: 200,
+        message: "Destination added to favorites",
+        likedDestinations: user.likedDestinations
+      });
+    } else {
+      return res.status(400).send({
+        statusCode: 400,
+        message: "Destination already in favorites"
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+users.delete("/users/:userId/like/:destinationId", async (req, res, next) => {
+  const { userId, destinationId } = req.params;
+  try {
+    const user = await UsersModel.findById(userId);
+    if (!user) {
+      return res.status(404).send({
+        statusCode: 404,
+        message: "User not found"
+      });
+    }
+
+    const index = user.likedDestinations.indexOf(destinationId);
+    if (index !== -1) {
+      user.likedDestinations.splice(index, 1);  
+      await user.save();
+      return res.status(200).send({
+        statusCode: 200,
+        message: "Destination removed from favorites",
+        likedDestinations: user.likedDestinations
+      });
+    } else {
+      return res.status(400).send({
+        statusCode: 400,
+        message: "Destination not found in favorites"
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+users.get("/users/:userId/liked-destinations", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    console.log("User ID:", userId); 
+    const user = await UsersModel.findById(userId).populate("likedDestinations");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ destinations: user.likedDestinations });
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ message: "Error retrieving liked destinations" });
+  }
+});
+
+
+
 
 module.exports = users;

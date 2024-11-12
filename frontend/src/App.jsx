@@ -15,6 +15,7 @@ import DestinationsPage from "./DestinationsPage";
 import OpenDestinationsPage from "./pages/OpenDestinationsPage";
 import SuccessLoginPage from "./pages/SuccessLoginPage";
 import UserReviewsList from "./pages/UserReviewsList";
+import LikedDestinationsPage from "./pages/LikedDestinationsPage";
 
 
 
@@ -42,6 +43,7 @@ function App() {
                 path="/destinations/:destinationId"
                 element={<DestinationDetails />}
               />
+              <Route path = "/favourite-destinations" element = {<LikedDestinationsPage/>}/>
               <Route path="/reviews-list" element = {<UserReviewsList/>}/>
               <Route
                 path="/users/update/:userId"

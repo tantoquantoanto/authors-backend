@@ -83,6 +83,7 @@ export const useNotApprovedDestinations = () => {
         error,
         totalNotApprovedPages,
         searchNotApprovedDestinationsByName,
-        resetNotApprovedDestinations
+        resetNotApprovedDestinations,
+        getNotApprovedDestinationsFromApi
     };
 };

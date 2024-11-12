@@ -194,6 +194,7 @@ const DestinationDetails = () => {
                 )}
 
                 {isAdmin && !singleDestination.approved && (
+                  <div className=" d-flex flex-column align-items-center justify-content-center">
                   <div className="d-flex align-items-center justify-content-center gap-2 mt-3">
                     <Button
                       onClick={() => updateDestinationApproval(true)}
@@ -208,6 +209,15 @@ const DestinationDetails = () => {
                     >
                       Discard Destination
                     </Button>
+                    </div>
+                    <Button
+                      variant="primary"
+                      className="mt-3"
+                      onClick={showEditingModal}
+                    >
+                      Edit Destination
+                    </Button>
+                  
                   </div>
                 )}
 

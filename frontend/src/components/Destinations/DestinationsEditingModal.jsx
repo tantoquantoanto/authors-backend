@@ -33,7 +33,7 @@ const DestinationsEditingModal = ({ show, handleClose, destination }) => {
     formData.append("img", file);
 
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/upload`,
+      `${import.meta.env.VITE_SERVER_BASE_URL}/destinations/upload/cloud`,
       {
         method: "POST",
         body: formData,

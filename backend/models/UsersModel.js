@@ -46,6 +46,12 @@ const UsersModel = new mongoose.Schema(
        
       }
     ],
+
+    likedDestinations: [{ 
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Destination"
+    }],
+    
     role: {
       type: String,
       enum: ['user', 'admin'], 
