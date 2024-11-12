@@ -12,13 +12,13 @@ const NewUsersForm = () => {
   };
 
   const uploadFile = async (fileToUpload) => {
-    const fileData = new FormData();
-    fileData.append("img", fileToUpload);
+    const formData = new FormData();
+    formData.append("img", fileToUpload);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/users/upload`, {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/users/upload/cloud`, {
         method: "POST",
-        body: fileData,
+        body: formData,
       });
       return await response.json();
     } catch (error) {

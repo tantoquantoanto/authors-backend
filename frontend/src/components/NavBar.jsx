@@ -30,15 +30,16 @@ const NavBar = ({ setShowApproved, onSearch, showApproved }) => {
             </Nav.Link>
 
             {!isAdmin && (
-              <Nav.Link as={Link} to="/" className="text-dark">
-                <LucidePlane size={20} className="me-1" /> Destinazioni
-              </Nav.Link>
+             <NavDropdown title={<span><LucidePlane size={20} className="me-1" /> Destinazioni</span>} id="destinations-dropdown">
+             <NavDropdown.Item as={Link} to="/create-new-destination"> Crea una nuova destinazione</NavDropdown.Item>              
+           </NavDropdown>
             )}
             
             {isAdmin && (
               <NavDropdown title={<span><LucidePlane size={20} className="me-1" /> Destinazioni</span>} id="destinations-dropdown">
                 <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(true)}>Destinazioni approvate</NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/destinations" onClick={() => setShowApproved(false)}>Destinazioni non approvate</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/create-new-destination"> Crea una nuova destinazione</NavDropdown.Item>              
               </NavDropdown>
             )}
 

@@ -18,6 +18,8 @@ import CreateReviewModal from "../Reviews/CreateReviewModal";
 import "../componentscss/destinationDetails.css";
 import { useSingleDestination } from "../../../hooks/useSingleDestination";
 import RotateLoaderComponent from "../Loaders/RotateLoaderComponent";
+import { useApprovedDestinations } from "../../../hooks/useApprovedDestinations";
+import { useNotApprovedDestinations } from "../../../hooks/useNotApprovedDestinations";
 
 const DestinationDetails = () => {
   const {
@@ -28,6 +30,8 @@ const DestinationDetails = () => {
     setLoading,
     setError,
   } = useSingleDestination();
+  const {approvedDestinations, setApprovedDestinations} = useApprovedDestinations();
+  const {notApprovedDestinations, setNotApprovedDestinations} = useNotApprovedDestinations()
   const { destinationId } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);

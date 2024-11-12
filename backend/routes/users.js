@@ -9,6 +9,7 @@ const UsersModel = require("../models/UsersModel");
 const isUserAdmin = require("../middlewares/isUserAdmin");
 const isUserAuthorizedToProfile = require("../middlewares/isUserAuthorizedToProfile");
 const sendConfirmationEmail = require("../middlewares/sendConfirmationEmail");
+const cloudStorage = require("../middlewares/multer/cloudinary");
 
 
 
@@ -24,6 +25,19 @@ const upload = multer({storage: internalStorage,
     }
 })
 
+const cloud = multer({ storage: cloudStorage });
+
+users.post(
+  "/users/upload/cloud",
+  cloud.single("img"),
+  async (req, res, next) => {
+    try {
+      res.status(200).json({ img: req.file.path });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 
 users.post("/users/upload", upload.single("img"), async (req,res,next) => {
@@ -128,12 +142,12 @@ users.patch("/users/update/:userId", isUserAuthorizedToProfile, async (req, res,
     const updatedData = req.body;
     const options = { new: true };
 
-    const updatedUser = await UsersModel.findByIdAndUpdate(
+    const result = await UsersModel.findByIdAndUpdate(
       userId,
       updatedData,
       options
     );
-    if (!updatedUser) {
+    if (!result) {
       return res
         .status(404)
         .send({ statusCode: 404, message: "User not found" });
@@ -144,7 +158,7 @@ users.patch("/users/update/:userId", isUserAuthorizedToProfile, async (req, res,
       .send({
         statusCode: 200,
         message: "User updated successfully",
-        updatedUser,
+        user: result
       });
   } catch (error) {
     next(error);

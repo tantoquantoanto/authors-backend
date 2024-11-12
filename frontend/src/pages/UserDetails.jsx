@@ -56,7 +56,7 @@ const UserDetails = () => {
     formData.append("img", file);
 
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_BASE_URL}/users/upload`,
+      `${import.meta.env.VITE_SERVER_BASE_URL}/users/upload/cloud`,
       {
         method: "POST",
         headers: {

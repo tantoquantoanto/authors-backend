@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import NewUsersForm from "./pages/NewUsersForm";
 import UserDetails from "./pages/UserDetails";
-import UpdateUserPage from "./pages/UpdateUserPage";
 import NewDestinationsForm from "./components/Destinations/NewDestinationsForm";
 import DestinationDetails from "./components/Destinations/DestinationDetails";
 import Contatti from "./pages/Contatti";
@@ -45,10 +44,6 @@ function App() {
               />
               <Route path = "/favourite-destinations" element = {<LikedDestinationsPage/>}/>
               <Route path="/reviews-list" element = {<UserReviewsList/>}/>
-              <Route
-                path="/users/update/:userId"
-                element={<UpdateUserPage />}
-              />
             </Route>
           </Routes>
         </BrowserRouter>

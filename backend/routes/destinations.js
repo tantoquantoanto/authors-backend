@@ -9,26 +9,50 @@ const cloudStorage = require("../middlewares/multer/cloudinary");
 const checkUserRole = require("../middlewares/checkUserRole");
 const isUserAdmin = require("../middlewares/isUserAdmin");
 const isUserUser = require("../middlewares/isUserUser");
+const sendApprovalEmail = require("../middlewares/sendApprovalEmail")
+const UsersModel = require("../models/UsersModel");
 
-//rotta per approvazione post facendo una put per modificare solo approved, accesso solo agli admin con middlewares
+
 destinations.put(
   "/destinations/approve/:destinationId",
   checkUserRole,
   isUserAdmin,
   async (req, res, next) => {
     const { destinationId } = req.params;
+    const approval = req.body;
+
     try {
-      const approval = req.body;
       const updatedDestination = await DestinationModel.findByIdAndUpdate(
         destinationId,
         approval,
         { new: true }
-      );
+      ).populate({ path: "user", select: "name surname email" }); 
 
       if (updatedDestination) {
         const message = approval.approved
           ? "Destinazione approvata con successo"
           : "Destinazione scartata con successo";
+
+       
+        const user = updatedDestination.user;
+        if (user) {
+          const emailContent = {
+            email: user.email,
+            name: user.name,
+          };
+
+          try {
+            await sendApprovalEmail({
+              email: emailContent.email,
+              name: emailContent.name,
+              approved: approval.approved,
+            });
+          } catch (error) {
+            console.error("Errore nell'invio dell'email:", error);
+          
+          }
+        }
+
         res.status(200).json({ message, updatedDestination });
       } else {
         res.status(404).json({ message: "Destinazione non trovata" });
@@ -38,6 +62,7 @@ destinations.put(
     }
   }
 );
+
 
 const cloud = multer({ storage: cloudStorage });
 
@@ -96,7 +121,7 @@ destinations.get("/destinations",  async (req, res, next) => {
       .limit(pageSize)
       .skip((page - 1) * pageSize)
       .populate({ path: "reviews" })
-      .populate({ path: "user", select: "name surname" });
+      .populate({ path: "user", select: "name surname email" });
 
     if (destinations.length === 0) {
       return res
@@ -213,12 +238,11 @@ destinations.get(
     const { name } = req.params;
     const { page = 1, pageSize = 6 } = req.query;
 
-    const keywords = name.split(' ')
-      .map(word => new RegExp(word.trim(), "i")) 
-      .filter(Boolean);
+    const keywordsRegex = new RegExp(name.split(" ").map(word => `(?=.*${word.trim()})`).join(""), "i");
+
     const query = {
       ...(req.userRole !== "admin" ? { approved: true } : {}),
-      name: { $in: keywords } 
+      name: keywordsRegex
     };
 
     try {
@@ -250,6 +274,7 @@ destinations.get(
     }
   }
 );
+
 
 
 destinations.post("/destinations/create", async (req, res, next) => {
