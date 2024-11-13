@@ -3,10 +3,13 @@ import { Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react"; 
 import "../componentscss/DestinationCard.css"
+import useSession from "../../../hooks/useSession";
 
-const DestinationCard = ({ img, name, location, category, id, isAdmin, isLiked, onLikeToggle }) => {
+const DestinationCard = ({ img, name, location, category, id,isLiked, onLikeToggle }) => {
   const navigate = useNavigate();
   const [destinationId, setDestinationId] = useState(null);
+  const session = useSession();
+  const isAdmin = session ?  session.role === "admin" : null;
   
 
 
@@ -15,11 +18,7 @@ const DestinationCard = ({ img, name, location, category, id, isAdmin, isLiked, 
     navigate(`/destinations/${id}`);
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked); 
-    
-  };
-
+  
 
 
   return (

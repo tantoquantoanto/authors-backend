@@ -4,6 +4,9 @@ import { Heart } from "lucide-react";
 import DestinationCard from "../components/Destinations/DestinationCard"; 
 import { useNavigate } from "react-router-dom"; 
 import useSession from "../../hooks/useSession";
+import NavBar from "../components/NavBar"
+import RotateLoaderComponent from "../components/Loaders/RotateLoaderComponent";
+import Footer from "../components/Footer";
 
 const LikedDestinationsPage = () => {
   const [likedDestinations, setLikedDestinations] = useState([]);
@@ -86,9 +89,7 @@ const LikedDestinationsPage = () => {
 
   if (loading) {
     return (
-      <Container className="py-4" style={{ textAlign: "center" }}>
-        <Spinner animation="border" variant="primary" />
-      </Container>
+     <RotateLoaderComponent/>
     );
   }
 
@@ -104,8 +105,10 @@ const LikedDestinationsPage = () => {
   }
 
   return (
+    <>
+    <NavBar/>
     <Container className="py-4">
-      <h2>Your Liked Destinations <Heart color="#ff0000" size={24} /></h2>
+      <h2 className="mb-5 display-5 shadow-sm" >Your Favourite Destinations <Heart color="#ff0000" size={28} /></h2>
       <Row>
         {likedDestinations.length > 0 ? (
           likedDestinations.map((destination) => (
@@ -126,6 +129,8 @@ const LikedDestinationsPage = () => {
         )}
       </Row>
     </Container>
+    <Footer/>
+    </>
   );
 };
 

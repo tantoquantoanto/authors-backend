@@ -176,7 +176,6 @@ const DestinationsPage = () => {
                       id={destination._id}
                       isLiked={likedDestinations.includes(destination._id)}
                       onLikeToggle={handleLikeToggle}
-                      isAdmin={isAdmin}
                     />
                   </Col>
                 ))}

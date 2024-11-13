@@ -26,7 +26,7 @@ const UsersModel = new mongoose.Schema(
     password: {
       type: String,
       required: true, 
-      minLegth: 8,
+      minLength: 8,
     },
 
     isActive: {

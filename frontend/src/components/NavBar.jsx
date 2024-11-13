@@ -1,6 +1,6 @@
 import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { LucidePlane, LucideHome, LucideUser, LucideFacebook, LucideTwitter, LucideInstagram } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import DestinationsSearchInput from "./Destinations/DestinationsSearchInput";
 import useSession from "../../hooks/useSession";
 
@@ -8,6 +8,7 @@ const NavBar = ({ setShowApproved, onSearch, showApproved }) => {
   const session = useSession();  
   const userId = session ? session.userId : null;
   const role = session ? session.role : null;
+  const location = useLocation()
 
   const handleLogOut = () => {
     localStorage.removeItem("Authorization");
@@ -79,9 +80,9 @@ const NavBar = ({ setShowApproved, onSearch, showApproved }) => {
               </Nav.Link>
             )}
 
-            <DestinationsSearchInput 
+            {(location.pathname === "/" || location.pathname === "/destinations") &&  (<DestinationsSearchInput 
               onSearch={onSearch} 
-            />
+            />)}
           </Nav>
 
           <Nav className="ms-3 d-flex align-items-center">
